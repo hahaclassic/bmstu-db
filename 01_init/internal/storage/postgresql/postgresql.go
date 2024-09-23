@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/hahaclassic/bmstu-db/01_init/config"
-	"github.com/hahaclassic/bmstu-db/01_init/internal/storage"
+	"github.com/hahaclassic/databases/01_init/config"
+	"github.com/hahaclassic/databases/01_init/internal/storage"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

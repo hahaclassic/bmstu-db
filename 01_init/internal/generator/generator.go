@@ -4,8 +4,8 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/hahaclassic/bmstu-db/01_init/config"
-	"github.com/hahaclassic/bmstu-db/01_init/internal/service"
+	"github.com/hahaclassic/databases/01_init/config"
+	"github.com/hahaclassic/databases/01_init/internal/service"
 )
 
 func Run(conf *config.Config) {

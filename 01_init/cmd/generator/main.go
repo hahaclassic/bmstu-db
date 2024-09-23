@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"github.com/hahaclassic/bmstu-db/01_init/config"
-	"github.com/hahaclassic/bmstu-db/01_init/internal/generator"
+	"github.com/hahaclassic/databases/01_init/config"
+	"github.com/hahaclassic/databases/01_init/internal/generator"
 )
 
 func main() {

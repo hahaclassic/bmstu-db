@@ -1,4 +1,4 @@
-module github.com/hahaclassic/bmstu-db/01_init
+module github.com/hahaclassic/databases/01_init
 
 go 1.23.0
 

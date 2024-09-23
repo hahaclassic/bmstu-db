@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/hahaclassic/bmstu-db/01_init/internal/storage"
+	"github.com/hahaclassic/databases/01_init/internal/storage"
 )
 
 type MusicService struct {
