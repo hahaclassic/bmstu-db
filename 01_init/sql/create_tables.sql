@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS playlists (
     title VARCHAR(100),
     description TEXT,
     private BOOLEAN,
+    last_updated TIMESTAMP,
     rating INT
 )
 
@@ -58,7 +59,6 @@ CREATE TABLE IF NOT EXISTS album_tracks (
 CREATE TABLE IF NOT EXISTS user_playlists (
     playlist_id UUID,
     user_id UUID,
-    last_updated TIMESTAMP,
     is_favorite BOOLEAN,
     access_level INT
 )
