@@ -3,21 +3,37 @@ package storage
 import (
 	"context"
 	"errors"
+
+	"github.com/google/uuid"
+	"github.com/hahaclassic/databases/01_init/internal/models"
 )
 
 var (
 	ErrStorageConnection = errors.New("storage: can't connect to the database")
 	ErrNoRowsAffected    = errors.New("no rows affected")
 	ErrNotFound          = errors.New("not found")
+
+	ErrCreateArtist       = errors.New("failed to create artist")
+	ErrCreateAlbum        = errors.New("failed to create album")
+	ErrCreateTrack        = errors.New("failed to create track")
+	ErrCreatePlaylist     = errors.New("failed to create playlist")
+	ErrCreateUser         = errors.New("failed to create user")
+	ErrAddPlaylist        = errors.New("failed to add playlist to user")
+	ErrAddTrackToPlaylist = errors.New("failed to add track to playlist")
+	ErrAddTrackToAlbum    = errors.New("failed to add track to album")
+	ErrDeleteAll          = errors.New("failed to delete all records")
 )
 
-// TODO
 type MusicServiceStorage interface {
-	AddArtist(ctx context.Context)
-	AddAlbum(ctx context.Context)
-	AddTrack(ctx context.Context)
-	AddPlaylist(ctx context.Context)
-	AddUser(ctx context.Context)
+	CreateArtist(ctx context.Context, artist *models.Artist) error
+	CreateAlbum(ctx context.Context, album *models.Album) error
+	CreateTrack(ctx context.Context, track *models.Track) error
+	CreatePlaylist(ctx context.Context, playlist *models.Playlist) error
+	CreateUser(ctx context.Context, user *models.User) error
 
-	DeleteAll()
+	AddPlaylist(ctx context.Context, userPlaylist *models.UserPlaylist) error
+	AddTrackToPlaylist(ctx context.Context, trackID uuid.UUID, playlistID uuid.UUID) error
+	AddTrackToAlbum(ctx context.Context, trackID uuid.UUID, albumID uuid.UUID) error
+
+	DeleteAll(ctx context.Context) error
 }
