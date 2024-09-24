@@ -1,16 +1,14 @@
 package models
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
 type Track struct {
-	ID          uuid.UUID
-	Name        string
-	Explicit    bool
-	Duration    time.Duration
-	Genre       string
-	StreamCount int64
+	ID          uuid.UUID `faker:"-"`
+	Name        string    `faker:"sentence:3"`
+	Explicit    bool      `faker:"boolean"`
+	Duration    int       `faker:"number:180,300"` // duration in seconds
+	Genre       string    `faker:"word"`
+	StreamCount int64     `faker:"number:1000,50000"`
 }
