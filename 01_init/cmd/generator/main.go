@@ -12,7 +12,7 @@ func main() {
 
 	flag.BoolVar(&generatorConf.DeleteCmd, "d", false, "Deletes all records in all tables")
 	flag.IntVar(&generatorConf.RecordsPerTable, "c", 1000, "'-c N': generates N records for each table")
-	flag.StringVar(&generatorConf.OutputCSV, "csv", "", "'-csv /path/to/your/file': output result to CSV")
+	flag.StringVar(&generatorConf.OutputCSV, "csv", "", "'-csv /path/to/your/folder': output result to CSV files")
 	flag.Parse()
 
 	// The database config is not needed to generate csv
