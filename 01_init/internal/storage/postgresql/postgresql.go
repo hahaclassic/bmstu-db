@@ -32,6 +32,10 @@ func New(ctx context.Context, config *config.PostgresConfig) (*MusicServiceStora
 	return &MusicServiceStorage{dbpool}, nil
 }
 
+func (s *MusicServiceStorage) Close() {
+	s.db.Close()
+}
+
 func (s *MusicServiceStorage) CreateArtist(ctx context.Context, artist *models.Artist) error {
 	query := `INSERT INTO artists (id, name, genre, country, debut_year) VALUES ($1, $2, $3, $4, $5)`
 
