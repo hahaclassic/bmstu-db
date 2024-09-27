@@ -1,0 +1,37 @@
+id,title,description,private,last_updated,rating
+a1f90123-78d9-4c9a-bf12-1a2d34567890,Chill Vibes,Relaxing tunes for a peaceful evening,FALSE,2024-09-24 12:00:00,4
+a2b01234-12d9-4c9b-8f01-1a23b45678c9,Workout Hits,Upbeat tracks to power your workout,FALSE,2024-09-24 12:00:00,5
+a3c12345-8b0c-4a9a-9a01-1f234567890d,Throwback Jams,Classic hits from the 90s and 2000s,FALSE,2024-09-24 12:00:00,4
+a4d23456-67a9-4c9b-8f01-1b23c4567890,Mood Booster,Feel-good songs to lift your spirits,FALSE,2024-09-24 12:00:00,5
+a5e34567-89a0-4c9a-9b01-1c23d4567891,Study Playlist,Focus-friendly music for studying,FALSE,2024-09-24 12:00:00,3
+a6f45678-90a1-4a9b-8c01-1d23e4567892,Relaxing Jazz,Soothing jazz tunes for relaxation,FALSE,2024-09-24 12:00:00,4
+a7g56789-1b2c-4a9b-8d01-1e23f4567893,Top 100 Hits,The most popular songs right now,FALSE,2024-09-24 12:00:00,5
+a8h67890-2c3d-4a9b-8e01-1f23g4567894,Party Anthems,The best tracks for your next party,FALSE,2024-09-24 12:00:00,5
+a9i78901-3d4e-4a9b-8f01-1g23h4567895,Indie Discoveries,New indie tracks to explore,FALSE,2024-09-24 12:00:00,4
+a0j89012-4e5f-4a9b-8g01-1h23i4567896,Acoustic Evening,Beautiful acoustic songs for a cozy night,FALSE,2024-09-24 12:00:00,4
+b1k90123-5f6g-4a9b-8h01-1i23j4567897,Travel Tunes,Songs to accompany your adventures,FALSE,2024-09-24 12:00:00,5
+b2l01234-6g7h-4a9b-8i01-1j23k4567898,Feeling Good,Positive vibes to start your day,FALSE,2024-09-24 12:00:00,5
+b3m12345-7h8i-4a9b-8j01-1k23l4567899,Sad Songs,Heartfelt tracks for when you're feeling down,FALSE,2024-09-24 12:00:00,3
+b4n23456-8i9j-4a9b-8k01-1l23m4567800,Romantic Evening,Love songs for a special night,FALSE,2024-09-24 12:00:00,5
+b5o34567-9j0k-4a9b-8l01-1m23n4567801,Sunday Morning,Relaxing tracks for a lazy Sunday,FALSE,2024-09-24 12:00:00,4
+b6p45678-0k1l-4a9b-8m01-1n23o4567802,Electronic Beats,Groovy electronic tracks to dance to,FALSE,2024-09-24 12:00:00,5
+b7q56789-1l2m-4a9b-8n01-1o23p4567803,Chill Out,Soft tracks for winding down,FALSE,2024-09-24 12:00:00,4
+b8r67890-2m3n-4a9b-8o01-1p23q4567804,Classic Rock Anthems,Timeless rock classics,FALSE,2024-09-24 12:00:00,5
+b9s78901-3n4o-4a9b-8p01-1q23r4567805,Golden Oldies,Hits from the past that never get old,FALSE,2024-09-24 12:00:00,4
+b0t89012-4o5p-4a9b-8q01-1r23s4567806,Feel-Good Pop,Upbeat pop tracks to make you smile,FALSE,2024-09-24 12:00:00,5
+c1u90123-5p6q-4a9b-8r01-1s23t4567807,Road Trip,Perfect songs for a long drive,FALSE,2024-09-24 12:00:00,4
+c2v01234-6q7r-4a9b-8s01-1t23u4567808,Quiet Moments,Peaceful music for quiet times,FALSE,2024-09-24 12:00:00,3
+c3w12345-7r8s-4a9b-8t01-1u23v4567809,Friday Night,Party tracks to kick off the weekend,FALSE,2024-09-24 12:00:00,5
+c4x23456-8s9t-4a9b-8u01-1v23w4567810,New Discoveries,Explore new music from various genres,FALSE,2024-09-24 12:00:00,4
+c5y34567-9t0u-4a9b-8v01-1w23x4567811,Mellow Beats,Laid-back beats for relaxation,FALSE,2024-09-24 12:00:00,4
+c6z45678-0u1v-4a9b-8w01-1x23y4567812,Essential R&B,The best of R&B music,FALSE,2024-09-24 12:00:00,5
+c7a56789-1v2w-4a9b-8x01-1y23z4567813,Chill Hip-Hop,Relaxed hip-hop tracks for downtime,FALSE,2024-09-24 12:00:00,4
+c8b67890-2w3x-4a9b-8y01-1z23a4567814,Women of Rock,Powerful female rock artists,FALSE,2024-09-24 12:00:00,5
+c9c78901-3x4y-4a9b-8z01-1a23b4567815,Acoustic Covers,Cover songs in acoustic style,FALSE,2024-09-24 12:00:00,4
+c0d89012-4y5z-4a9b-9a01-1b23c4567816,Music for Focus,Concentration-friendly music,FALSE,2024-09-24 12:00:00,3
+d1e90123-5z6a-4a9b-9b01-1c23d4567817,Summer Vibes,Tracks that capture the essence of summer,FALSE,2024-09-24 12:00:00,5
+d2f01234-6a7b-4a9b-9c01-1d23e4567818,Winter Wonderland,Cozy tracks for winter days,FALSE,2024-09-24 12:00:00,4
+d3g12345-7b8c-4a9b-9d01-1e23f4567819,Indie Pop Essentials,Must-have indie pop tracks,FALSE,2024-09-24 12:00:00,4
+d4h23456-8c9d-4a9b-9e01-1f23g4567820,Meditation Music,Tracks for mindfulness and meditation,FALSE,2024-09-24 12:00:00,4
+d5i34567-9d0e-4a9b-9f01-1g23h4567821,Rock Ballads,Emotional rock ballads to sing along to,FALSE,2024-09-24 12:00:00,5
+d6j45678-0e1f-4a9b-9g01-1h23i4567822,Retro Beats,Throwback beats to relive the past,FALSE,2024-09-24 12:00:00,4

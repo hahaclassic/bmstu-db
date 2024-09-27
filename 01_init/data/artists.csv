@@ -1,0 +1,120 @@
+id,name,genre,country,debut_year
+d3b07384-d113-4a29-b5a3-2c1bfb27f351,The Beatles,Rock,United Kingdom,1960
+a1b2c3d4-e567-4f89-b123-2d3f4a567b89,Michael Jackson,Pop,United States,1964
+f3a5b8d6-c112-47cb-9b2b-f0c7b8d3a111,Elvis Presley,Rock and Roll,United States,1954
+e890b456-2901-4c69-84a8-7d9b104c1234,Madonna,Pop,United States,1982
+c234d89e-12c1-4b56-a8d9-8e90b876123f,Queen,Rock,United Kingdom,1970
+f912a34d-76e4-4a45-b9c4-23f8dba9c899,Beyoncé,R&B,United States,1997
+b90d3457-4a23-4e5b-b890-12c89a34e678,Taylor Swift,Pop,United States,2006
+8a97b450-c923-4e79-a123-4b6d9c4a213f,Eminem,Hip-Hop,United States,1996
+67a3d892-4012-4abc-89a1-1e7b51209f8b,Whitney Houston,Pop,United States,1983
+f9e4c987-8123-4abc-9f3b-0e8a9d12a123,Drake,Hip-Hop,Canada,2006
+a1f90875-c37f-4abc-a907-2b57c2d70123,Rihanna,Pop,Barbados,2005
+cde809ab-78bc-491a-bb68-4ef2346b1b24,Elton John,Rock,United Kingdom,1967
+bc2fa948-56ab-4ea9-b2b6-df57afcd2938,Adele,Soul,United Kingdom,2008
+1243fa9e-76b2-4bc9-a78a-bcda6789f56e,Jay-Z,Hip-Hop,United States,1996
+fbc1fa92-9af8-4ef7-bc12-34ad7f9021ab,Ed Sheeran,Pop,United Kingdom,2011
+dba90b12-34fc-4ea1-ab67-3a5f0912bcde,Kanye West,Hip-Hop,United States,2003
+fdeab847-5abc-4e8d-a012-23bdfa901234,Lady Gaga,Pop,United States,2008
+c908fbde-6f78-45ab-b9a7-c56d8a0bc56f,Bruno Mars,Pop,United States,2010
+f120cb09-8d9a-4e7f-a09d-cf57d891c02d,U2,Rock,Ireland,1976
+7fba8d6a-123b-4b09-8cda-45af6a123e78,Coldplay,Rock,United Kingdom,1996
+98abc129-d67f-45ab-8b5a-7f98a01234bc,Justin Timberlake,Pop,United States,1995
+ab12e678-90fa-47cd-89fa-12bcf908d7a6,Shakira,Pop,Colombia,1990
+cf78b12a-7a89-4abc-98a1-2dcd9a03456a,The Weeknd,R&B,Canada,2010
+bd091f8a-5b89-4abc-912a-f98d12bcde45,Ariana Grande,Pop,United States,2013
+d0afba23-56bc-45de-8a1b-bc5678f90123,Bob Dylan,Folk,United States,1961
+e980123b-7890-4a67-9b78-c123abd678fa,Bruce Springsteen,Rock,United States,1973
+f0b9d87a-23d5-4e12-bc5d-8c9a6b123d5f,David Bowie,Rock,United Kingdom,1967
+a1b3d678-5c9a-4f89-9d01-2a3bf8a91234,Billie Eilish,Pop,United States,2015
+bcd09a12-789f-45de-bc12-0f98a1234e78,Amy Winehouse,Soul,United Kingdom,2003
+c8d12b90-1234-4ea7-bc89-d2a1c789012f,Frank Sinatra,Jazz,United States,1935
+c12a345b-d0c9-4ea8-9a7f-b78d01c89abc,Prince,Funk,United States,1978
+f09b23a8-5c1d-4ef8-b12a-bc90789012f7,Nirvana,Grunge,United States,1987
+d123fa9b-7f90-4ab5-b89d-f012b3c56abc,Stevie Wonder,Soul,United States,1961
+b9c8a1d5-9fa3-45ab-a09d-8a1b2c90876d,Marvin Gaye,Soul,United States,1961
+a9d0f128-6bc1-4f89-bd09-2348bc90123e,Fleetwood Mac,Rock,United Kingdom,1967
+1a2c3d4f-5678-4b09-a8cd-9a0f1b2c34d5,Green Day,Punk,United States,1987
+b0d9f123-45bc-4ef7-9a1d-b2c6789d0123,Linkin Park,Rock,United States,1996
+e678d90b-5c9f-4b78-8a1b-fd2a34b56c12,Post Malone,Hip-Hop,United States,2015
+a7f0b678-c9a1-4a9d-bc8d-0b3a56789123,Kendrick Lamar,Hip-Hop,United States,2010
+f123a8b9-90d7-4b12-8a1c-567b09c890f1,Katy Perry,Pop,United States,2001
+d0b89c12-78a1-4ea9-b89c-1a23b56d890f,Britney Spears,Pop,United States,1998
+e1f29c3a-4b56-4ea8-bf12-2a67b9801234,Christina Aguilera,Pop,United States,1999
+a12b89cf-3b4d-45f8-912c-67d89f01c23a,Justin Bieber,Pop,Canada,2007
+c789d0a1-5c9a-4d8a-b012-23f8a567bc90,Lil Wayne,Hip-Hop,United States,1995
+9a1b0fcd-67a9-4d8f-a90c-123b4567e8d9,Travis Scott,Hip-Hop,United States,2013
+a2b7c908-4a9d-4e12-bc7a-8a1f9e1234b5,Maroon 5,Pop,United States,1994
+f123b456-78a9-4a12-9b0c-1a23bcd789f1,Nicki Minaj,Hip-Hop,United States,2007
+c4b90d8a-1a2b-4a9c-89f7-1b2d3456789e,Cardi B,Hip-Hop,United States,2017
+e1b23a9d-5c4f-4e8a-b01d-23f78c90b12a,Ellie Goulding,Pop,United Kingdom,2009
+f5a89b12-7890-4a12-8f9d-123c456d7890,Lorde,Pop,New Zealand,2012
+7a8d90bc-4c56-4e12-a09d-0b12a567c8f9,Sam Smith,Pop,United Kingdom,2012
+1f3b5a67-9d8a-4a12-9b01-8c9f01234bcd,Dua Lipa,Pop,United Kingdom,2015
+bc8a1234-5679-4d8a-b01f-2a123c567890,Zedd,Electronic,Germany,2010
+c90b1a23-67d8-4f89-9012-3a4f567c890d,Avicii,Electronic,Sweden,2008
+a0f12b34-78c9-4a8b-9012-1a2b34c567f9,Daft Punk,Electronic,France,1993
+e678a90b-12f9-4c89-8a01-2a34b5678d9c,Calvin Harris,Electronic,United Kingdom,2007
+bc7890a1-4d89-45a8-9a01-1a23f9b567c8,Kygo,Electronic,Norway,2013
+f90a1234-5c89-4a8b-89d0-1234a56b7890,The Chainsmokers,Electronic,United States,2012
+e12f90b8-7a9c-4a01-9d78-0123b5678a9c,Florence + The Machine,Indie,United Kingdom,2007
+0f123b4a-89a1-45c7-8a01-bc5678d90123,Halsey,Pop,United States,2014
+f9012c3b-4a8f-4d9b-89c0-1a234b567d89,Lil Nas X,Hip-Hop,United States,2018
+b9a1234d-78c0-45e9-89d0-123c4567890b,Doja Cat,Hip-Hop,United States,2018
+c90f12a3-4a5b-4d89-a012-3a56b7890d1f,Olivia Rodrigo,Pop,United States,2020
+fd72a8f3-c9a1-41b8-bd09-95a7f872356d,The Rolling Stones,Rock,United Kingdom,1962
+edb123f8-7c89-42ab-b09f-fd345f8d9012,Pink Floyd,Rock,United Kingdom,1965
+af129f8b-78a9-4a9b-b67d-8a2f098b7d12,Lana Del Rey,Pop,United States,2010
+bd789d12-67af-4c9b-b012-9b23cd7890a1,Sia,Pop,Australia,1997
+cf1239a7-5b6f-49a8-8f2c-0f98a12bc567,Kings of Leon,Rock,United States,1999
+de1f098b-89d0-4a9b-bf12-3a89c12d9f78,The Killers,Rock,United States,2001
+abf9c87b-12a9-49c8-8a1f-3d45e9b67012,Radiohead,Alternative,United Kingdom,1985
+e2fa89d1-67c9-40b9-b1f0-9a23f901d23a,The Smiths,Alternative,United Kingdom,1982
+c9b0a12f-8d79-47d9-bb1f-2f0c123a67b9,Blur,Alternative,United Kingdom,1988
+a6f98b12-12d9-4c9b-8a0f-2d34f7890a1b,Oasis,Rock,United Kingdom,1991
+bcf123a8-56d9-40a8-8a0d-234b6789012a,Foo Fighters,Rock,United States,1994
+d6789a12-1b0c-4a9b-b12f-8a0f12b34c56,Arcade Fire,Indie,Canada,2001
+ef098a12-8a9d-4a9b-bc12-3f678d90123f,Arctic Monkeys,Indie,United Kingdom,2002
+a0f98b12-9a0f-49c9-b78a-1f234c56789d,Bon Iver,Indie,United States,2007
+d1f2b89c-78f9-49b8-bf12-2d345678901a,Death Cab for Cutie,Indie,United States,1997
+cf890d12-45bc-4ea9-8b01-9f0b12c45678,Muse,Rock,United Kingdom,1994
+ab12d9f8-5b9a-49a9-b01f-2f90c123b678,Pearl Jam,Rock,United States,1990
+b9a1c34f-78bc-40a9-bd12-23f9c12d345e,Soundgarden,Grunge,United States,1984
+e0f12a9d-45c9-40a9-bc01-2f34a567c89d,Smashing Pumpkins,Rock,United States,1988
+fa098b12-8d90-4a9c-b01d-1a34f5678c9d,Franz Ferdinand,Indie,United Kingdom,2002
+b789f01d-5b12-4c9a-bf01-9a23f901234b,My Chemical Romance,Alternative,United States,2001
+cf78901d-12f9-4c8a-8b9d-0a12f345678c,Panic! At The Disco,Alternative,United States,2004
+a0f12c9d-56bc-49a9-bd12-8a9f23b678c1,Fall Out Boy,Alternative,United States,2001
+df89c01a-7b9f-4a9b-bf12-2a34b901f567,Paramore,Alternative,United States,2004
+ef0c12a9-8a9f-40b8-8b01-3f4a567c890d,The Strokes,Rock,United States,1998
+a1f0c98b-6b89-4c9a-bc01-23d56789f012,Vampire Weekend,Indie,United States,2006
+f89c01d2-4f12-49b8-9a0d-12b34c567890,MGMT,Indie,United States,2002
+bc01d78a-12f9-40c9-bd01-1a2f345678c0,Tame Impala,Indie,Australia,2007
+c01f98b7-78a9-40a8-8b01-3a23d901c789,Cage the Elephant,Rock,United States,2006
+e890d12a-4f9b-49c9-bf12-2f0a9012b345,The White Stripes,Rock,United States,1997
+cfa123d9-12c0-4a9c-b01f-3a4f56789c12,The Black Keys,Rock,United States,2001
+d0b12f89-8c9a-49d8-9a0f-12d34b5678c9,Yeah Yeah Yeahs,Indie,United States,2000
+fa9c01b2-7a0d-4a9b-b01f-23c456789012,Phoenix,Indie,France,1999
+c012f789-9b8c-4a01-9a01-23f56789d012,Florence and the Machine,Indie,United Kingdom,2007
+bcd12f90-56a9-49a9-8a01-1f23d9016789,LCD Soundsystem,Electronic,United States,2002
+fa9d8c01-7b90-4c9a-8a01-3a4b567c890d,Justice,Electronic,France,2003
+f01d90bc-4b9f-4a9b-bf01-23a90123456d,Gorillaz,Alternative,United Kingdom,1998
+e89f01bc-1a9f-4c9b-8b01-23a4567c890d,The XX,Indie,United Kingdom,2005
+f09a12bc-78d9-4a9b-9b0f-1a2d34567890,The 1975,Indie,United Kingdom,2002
+b89f01d2-45a9-4a8c-8b9f-12a345678d90,Two Door Cinema Club,Indie,Ireland,2007
+dfc89012-67d9-4a9b-b01d-23a56789c01b,Foster the People,Indie,United States,2009
+fa9b01d2-45a9-4a9b-bf12-3a4b5678c90d,Portugal. The Man,Indie,United States,2004
+b0a1c89d-78b9-4f12-b01d-12a3b456c789,Glass Animals,Indie,United Kingdom,2010
+fa9012bc-45b9-4c8b-9f01-23a4b5678c90,Alt-J,Indie,United Kingdom,2007
+e012d89a-78c0-4b9a-b01d-1a2b345678d0,Bastille,Indie,United Kingdom,2010
+d012f89b-56c9-4a8f-9a01-12b34567d890,The Neighbourhood,Indie,United States,2011
+f9d8b01a-12b9-4c9f-8b01-12a3456789cd,Lorde,Pop,New Zealand,2012
+fa901b23-78b9-40a8-8f01-12c567890d12,Hozier,Indie,Ireland,2013
+bcf123a8-78d9-4c9b-9a01-1a2d345678f0,James Bay,Indie,United Kingdom,2013
+fa01d678-9b0c-4a9b-bf01-1a23d5678c90,Khalid,R&B,United States,2016
+ef9d01a2-5c9b-4a9b-8f01-1a23456789bc,Frank Ocean,R&B,United States,2011
+b9d01a23-78c9-4a9b-9f01-23a4567b890d,The Weeknd,R&B,Canada,2010
+bc01d78a-67c9-40a8-9a01-12d345678901,Solange,R&B,United States,2002
+d0f12c89-5b9a-4a9b-b01f-2f3456789d01,Alicia Keys,R&B,United States,2001
+f01b234a-4a9b-49d8-8b0d-1a34567890b1,SZA,R&B,United States,2017
+b90123f8-8c9a-4a9b-9a0f-1f2d345678c0,Anderson .Paak,R&B,United States,2014

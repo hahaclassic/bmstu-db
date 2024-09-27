@@ -1,0 +1,52 @@
+id,title,release_date,label,genre
+a1f90123-78d9-4c9a-bf12-1a2d34567890,Beggars Banquet,1968-12-06,Decca,Rock
+a2b01234-12d9-4c9b-8f01-1a23b45678c9,Let It Bleed,1969-12-05,Decca,Rock
+a3c12345-8b0c-4a9a-9a01-1f234567890d,Sticky Fingers,1971-04-23,Rolling Stones,Rock
+
+b2c0f89a-89d0-4a9b-9f01-1a23d9012345,Wish You Were Here,1975-09-12,Harvest,Rock
+b3d1234a-6d9b-4a9a-bf0d-2f34b5678901,The Dark Side of the Moon,1973-03-01,Harvest,Rock
+b4a1234b-12d9-49a9-8f01-1a23d5678902,Animals,1977-01-21,Harvest,Rock
+
+c3a789d0-5b9f-4a9b-bf12-2a34c6789012,Born to Die,2012-01-27,Interscope,Pop
+c4b0123c-8c9a-4a9b-8f0d-1a23b5678903,Lust for Life,2017-07-21,Interscope,Pop
+c5c1234d-12f9-49a9-bf01-2a34d5678904,Honeymoon,2015-09-18,Interscope,Pop
+
+d4b1239a-12c0-4a9b-8f01-3a4f567890bc,1000 Forms of Fear,2014-07-04,RCA,Pop
+d5c1234e-67d9-4c9b-9a01-1a2d34567890,This Is Acting,2016-01-29,RCA,Pop
+d6f0123f-78d9-49a9-bf12-12f34b5678905,Everyday Is Christmas,2017-11-17,Monkey Puzzle,Pop
+
+e5a90b12-78c9-49d8-9f0b-12a345678c90,Only by the Night,2008-09-19,RCA,Rock
+e6b1234g-67b9-49a8-9f01-2f3456789012,Come Around Sundown,2010-10-15,RCA,Rock
+e7f12345-45d9-49a8-9a01-12f34b5678906,Mechanical Bull,2013-09-24,RCA,Rock
+
+f6d0c89b-67a9-4c9b-bf12-2a34b67890f1,Hot Fuss,2004-06-07,Island,Rock
+f7a90123-8b0f-4a9b-8f01-12a34b5678907,Sam's Town,2006-10-02,Island,Rock
+f8b01234-5c9a-4c9a-9f01-1a23c5678908,Day & Age,2008-11-18,Island,Rock
+
+a7b890d1-56d9-49a8-9a01-2f34c90123d0,OK Computer,1997-05-21,Parlophone,Alternative
+a8c01234-8d9a-49a9-bf0d-12f34b5678909,The Bends,1995-03-13,Parlophone,Alternative
+a9d12345-12b9-4c9b-8f01-2a34b5678910,Kid A,2000-10-02,Parlophone,Alternative
+
+b8f0d123-8c9a-40a9-8b01-3a4f56789c12,The Queen Is Dead,1986-06-16,Rough Trade,Alternative
+b9e01234-6b9f-4c9b-9a01-1a23b5678911,Meat Is Murder,1985-02-11,Rough Trade,Alternative
+b0f12345-78b9-4a9a-9f01-2f34b5678912,Strangeways, Here We Come,1987-09-28,Rough Trade,Alternative
+
+c9b123f8-4a8b-4d9a-9f01-12d34b90123a,Blur,1997-02-10,Food,Alternative
+c0d12345-56d9-4a9b-9a01-12f34b5678913,Parklife,1994-04-25,Food,Alternative
+c1f01234-89c9-49a9-bf01-1f34b5678914,Modern Life Is Rubbish,1993-05-10,Food,Alternative
+
+d0a9b0f1-78c9-4c9a-bf12-1a23d5678b90,(What's the Story) Morning Glory?,1995-10-02,Creation,Rock
+d1c01234-8b0f-4a9b-9a01-1f23b5678915,Definitely Maybe,1994-08-29,Creation,Rock
+d2b01234-6c9a-49a9-bf01-12f34b5678916,Be Here Now,1997-08-21,Creation,Rock
+
+e1c789d0-12d9-4a9b-8b01-1a23b45678c9,The Colour and the Shape,1997-05-20,Roswell,Rock
+e2d12345-67b9-4a9a-9a01-2f34c5678917,There Is Nothing Left to Lose,1999-11-02,Roswell,Rock
+e3f01234-8b0f-4c9b-9f0d-12f34b5678918,One by One,2002-10-22,Roswell,Rock
+
+f2b90123-45c9-40a9-8f01-2f3456789012,Funeral,2004-09-14,Merge,Indie
+f3d01234-7d9a-49a8-bf01-1a23b5678919,Neon Bible,2007-03-05,Merge,Indie
+f4a12345-8b9f-4c9a-9a01-1f34b5678920,The Suburbs,2010-08-02,Merge,Indie
+
+g1f01234-5b9f-49a9-9a01-12f34b5678921,Franz Ferdinand,2004-02-09,Dominion,Indie
+g2d12345-7c9f-4a9b-bf01-2f34b5678922,You Could Have It So Much Better,2005-10-03,Dominion,Indie
+g3a12345-8b9a-49a9-9f01-12a34b5678923,Right Thoughts, Right Words, Right Action,2013-08-26,Dominion,Indie

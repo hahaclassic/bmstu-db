@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/hahaclassic/databases/01_init/config"
 	"github.com/hahaclassic/databases/01_init/internal/generator"
@@ -18,6 +19,8 @@ func main() {
 	// The database config is not needed to generate csv
 	if generatorConf.OutputCSV == "" {
 		conf = config.MustLoad()
+	} else {
+		fmt.Println("csv output not working. Use generation for postgres db: ./generator.exe -c 1000")
 	}
 
 	conf.Generator = *generatorConf

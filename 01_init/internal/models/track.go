@@ -9,6 +9,6 @@ type Track struct {
 	Name        string    `faker:"sentence:3"`
 	Explicit    bool      `faker:"boolean"`
 	Duration    int       `faker:"number:180,300"` // duration in seconds
-	Genre       string    `faker:"word"`
+	Genre       string    `faker:"-"`
 	StreamCount int64     `faker:"number:1000,50000"`
 }

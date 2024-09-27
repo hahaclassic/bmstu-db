@@ -63,11 +63,6 @@ CREATE TABLE IF NOT EXISTS user_playlists (
     access_level INT
 )
 
-CREATE TABLE IF NOT EXISTS albums_by_artists (
-    album_id UUID,
-    artist_id UUID,
-);
-
 CREATE TABLE IF NOT EXISTS tracks_by_artists (
     track_id UUID,
     artist_id UUID

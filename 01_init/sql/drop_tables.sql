@@ -1,7 +1,5 @@
 DROP TABLE IF EXISTS tracks_by_artists;
 
-DROP TABLE IF EXISTS albums_by_artists;
-
 DROP TABLE IF EXISTS user_playlists;
 
 DROP TABLE IF EXISTS album_tracks;

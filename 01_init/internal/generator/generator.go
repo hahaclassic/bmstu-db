@@ -6,23 +6,40 @@ import (
 
 	"github.com/hahaclassic/databases/01_init/config"
 	"github.com/hahaclassic/databases/01_init/internal/service"
+	"github.com/hahaclassic/databases/01_init/internal/storage"
+	"github.com/hahaclassic/databases/01_init/internal/storage/postgresql"
 )
 
 func Run(conf *config.Config) {
-	musicStorage := storage.New(conf.Postres)
-	musicService := service.New(musicStorage)
+	ctx := context.Background()
 
-	var err error
+	var (
+		musicStorage storage.MusicServiceStorage
+		err          error
+	)
+
+	if conf.Generator.OutputCSV == "" {
+		musicStorage, err = postgresql.New(ctx, &conf.Postres)
+	} else {
+		// musicStorage, err = csv.New(conf.Generator.OutputCSV)
+	}
+
+	defer musicStorage.Close()
+
+	if err != nil {
+		slog.Error("[ERR]", err)
+
+		return
+	}
+
+	musicService := service.New(musicStorage)
 
 	switch {
 	case conf.Generator.DeleteCmd:
-		err = musicService.DeleteAll(context.Background())
-
-	case conf.Generator.OutputCSV != "":
-		err = musicService.GenerateCSV(context.Background(), conf.Generator.OutputCSV, conf.Generator.RecordsPerTable)
+		err = musicService.DeleteAll(ctx)
 
 	default:
-		err = musicService.Generate(context.Background(), conf.Generator.RecordsPerTable)
+		err = musicService.Generate(ctx, conf.Generator.RecordsPerTable)
 	}
 
 	if err != nil {

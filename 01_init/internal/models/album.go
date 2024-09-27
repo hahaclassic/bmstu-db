@@ -11,5 +11,5 @@ type Album struct {
 	Title       string    `faker:"sentence:3"`
 	ReleaseDate time.Time
 	Label       string `faker:"word"`
-	Genre       string `faker:"word"`
+	Genre       string `faker:"-"`
 }

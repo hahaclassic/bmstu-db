@@ -32,11 +32,6 @@ ADD CONSTRAINT fk_user_playlist_user FOREIGN KEY (user_id) REFERENCES users(id),
 ADD CONSTRAINT check_access_level CHECK (access_level >= 0),
 ALTER COLUMN last_updated SET DEFAULT CURRENT_TIMESTAMP;
 
-ALTER TABLE albums_by_artists
-ADD CONSTRAINT fk_album_artist_album FOREIGN KEY (album_id) REFERENCES albums(id),
-ADD CONSTRAINT fk_album_artist_artist FOREIGN KEY (artist_id) REFERENCES artists(id),
-ADD CONSTRAINT unique_album_artist UNIQUE (album_id, artist_id);
-
 ALTER TABLE tracks_by_artists
 ADD CONSTRAINT fk_track_artist_track FOREIGN KEY (track_id) REFERENCES tracks(id),
 ADD CONSTRAINT fk_track_artist_artist FOREIGN KEY (artist_id) REFERENCES artists(id),

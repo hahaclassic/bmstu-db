@@ -124,6 +124,16 @@ func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, trackID uuid.
 	return nil
 }
 
+func (s *MusicServiceStorage) AddArtistTrack(ctx context.Context, trackID uuid.UUID, artistID uuid.UUID) error {
+	query := `INSERT INTO tracks_by_artists (track_id, album_id) VALUES ($1, $2)`
+
+	if _, err := s.db.Exec(ctx, query, trackID, artistID); err != nil {
+		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)
+	}
+
+	return nil
+}
+
 func (s *MusicServiceStorage) DeleteAll(ctx context.Context) error {
 	tables := []string{
 		"user_playlists",

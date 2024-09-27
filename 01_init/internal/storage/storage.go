@@ -21,7 +21,9 @@ var (
 	ErrAddPlaylist        = errors.New("failed to add playlist to user")
 	ErrAddTrackToPlaylist = errors.New("failed to add track to playlist")
 	ErrAddTrackToAlbum    = errors.New("failed to add track to album")
-	ErrDeleteAll          = errors.New("failed to delete all records")
+	ErrAddArtistTrack     = errors.New("failed to add artist track")
+
+	ErrDeleteAll = errors.New("failed to delete all records")
 )
 
 type MusicServiceStorage interface {
@@ -34,6 +36,9 @@ type MusicServiceStorage interface {
 	AddPlaylist(ctx context.Context, userPlaylist *models.UserPlaylist) error
 	AddTrackToPlaylist(ctx context.Context, trackID uuid.UUID, playlistID uuid.UUID) error
 	AddTrackToAlbum(ctx context.Context, trackID uuid.UUID, albumID uuid.UUID) error
+	AddArtistTrack(ctx context.Context, trackID uuid.UUID, artistID uuid.UUID) error
 
 	DeleteAll(ctx context.Context) error
+
+	Close()
 }
