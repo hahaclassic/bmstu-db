@@ -36,8 +36,7 @@ type MusicServiceStorage interface {
 	CreateUser(ctx context.Context, user *models.User) error
 
 	AddPlaylist(ctx context.Context, userPlaylist *models.UserPlaylist) error
-	AddTrackToPlaylist(ctx context.Context, track *models.ListTrack) error
-	AddTrackToAlbum(ctx context.Context, track *models.ListTrack) error
+	AddTrackToPlaylist(ctx context.Context, track *models.PlaylistTrack) error
 	AddArtistTrack(ctx context.Context, trackID uuid.UUID, artistID uuid.UUID) error
 	AddArtistAlbum(ctx context.Context, albumID uuid.UUID, artistID uuid.UUID) error
 

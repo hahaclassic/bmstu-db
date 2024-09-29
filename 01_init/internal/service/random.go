@@ -48,10 +48,8 @@ func randomDates() (time.Time, time.Time, time.Time) {
 	return birth, registration, premium
 }
 
-func randomLastUpdated() time.Time {
-	min := time.Date(2010, 1, 1, 0, 0, 0, 0, time.UTC)
-	max := time.Now()
-	seconds := rand.Int64N(max.Unix() - min.Unix())
+func randomDateAfter(t time.Time) time.Time {
+	seconds := rand.Int64N(time.Now().Unix() - t.Unix())
 
-	return min.Add(time.Duration(seconds) * time.Second)
+	return t.Add(time.Duration(seconds) * time.Second)
 }

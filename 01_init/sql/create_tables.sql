@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS artists (
     genre VARCHAR(50),
     country VARCHAR(50),
     debut_year INT
-)
+);
 
 CREATE TABLE IF NOT EXISTS albums (
     id UUID PRIMARY KEY,
@@ -14,18 +14,18 @@ CREATE TABLE IF NOT EXISTS albums (
     release_date DATE,
     label VARCHAR(100),
     genre VARCHAR(50)
-)
+);
 
 CREATE TABLE IF NOT EXISTS tracks (
     id UUID PRIMARY KEY,
     name VARCHAR(100),
     order_in_album INT,
-    album_id UUID
+    album_id UUID,
     explicit BOOLEAN,
     duration INT,
     genre VARCHAR(50),
-    stream_count BIGINT,
-)
+    stream_count BIGINT
+);
 
 CREATE TABLE IF NOT EXISTS playlists (
     id UUID PRIMARY KEY,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS playlists (
     private BOOLEAN,
     last_updated TIMESTAMP,
     rating INT
-)
+);
 
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY,
@@ -42,22 +42,22 @@ CREATE TABLE IF NOT EXISTS users (
     registration_date TIMESTAMP,
     birth_date DATE,
     premium BOOLEAN,
-    premium_expiration TIMESTAMP,
-)
+    premium_expiration TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS playlist_tracks (
     track_id UUID,
     playlist_id UUID,
     date_added TIMESTAMP,
     track_order INT
-)
+);
 
 CREATE TABLE IF NOT EXISTS user_playlists (
     playlist_id UUID,
     user_id UUID,
     is_favorite BOOLEAN,
     access_level INT
-)
+);
 
 CREATE TABLE IF NOT EXISTS tracks_by_artists (
     track_id UUID,

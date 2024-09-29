@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"math/rand/v2"
 	"sync"
+	"time"
 
 	"github.com/go-faker/faker/v4"
 	"github.com/google/uuid"
@@ -73,16 +73,16 @@ func (m *MusicService) generateProducersData(ctx context.Context, numOfArtists i
 }
 
 func (m *MusicService) generateArtistWithAlbumsAndTracks(ctx context.Context, tracks *mutexslice.Slice[uuid.UUID]) {
-	artist := &models.Artist{}
+	artist := &models.Artist{
+		Genre: randGenre(),
+	}
 	err := faker.FakeData(artist)
 	if err != nil {
 		slog.Error("", "error", err)
 		return
 	}
 
-	artist.Genre = randGenre()
-	artist.ID, err = uuid.NewRandom()
-	if err != nil {
+	if artist.ID, err = uuid.NewRandom(); err != nil {
 		slog.Error("", "error", err)
 		return
 	}
@@ -92,27 +92,33 @@ func (m *MusicService) generateArtistWithAlbumsAndTracks(ctx context.Context, tr
 		return
 	}
 
-	var numOfAlbums int32
+	m.generateAlbums(ctx, artist, tracks)
+}
+
+func (m *MusicService) generateAlbums(ctx context.Context, artist *models.Artist, tracks *mutexslice.Slice[uuid.UUID]) {
+	var (
+		err         error
+		numOfAlbums int32
+	)
 	for numOfAlbums == 0 {
 		numOfAlbums = rand.Int32N(maxAlbumsPerArtist)
 	}
 
 	for range numOfAlbums {
-		album := &models.Album{}
+		album := &models.Album{
+			Genre:       artist.Genre,
+			ReleaseDate: randomDateAfter(time.Date(artist.DebutYear, 1, 1, 0, 0, 0, 0, time.UTC)),
+		}
 
-		album.ID, err = uuid.NewRandom()
-		if err != nil {
+		if album.ID, err = uuid.NewRandom(); err != nil {
 			slog.Error("", "error", err)
 			continue
 		}
 
-		err = faker.FakeData(album)
-		if err != nil {
+		if err = faker.FakeData(album); err != nil {
 			slog.Error("", "error", err)
 			continue
 		}
-
-		album.Genre = artist.Genre
 
 		if err := m.storage.CreateAlbum(ctx, album); err != nil {
 			slog.Error("", "error", err)
@@ -124,44 +130,47 @@ func (m *MusicService) generateArtistWithAlbumsAndTracks(ctx context.Context, tr
 			continue
 		}
 
-		var numOfTracks int32
-		for numOfTracks == 0 {
-			numOfTracks = rand.Int32N(maxTracksPerAlbum)
+		m.generateTracks(ctx, album, artist.ID, tracks)
+	}
+}
+
+func (m *MusicService) generateTracks(ctx context.Context, album *models.Album, artistID uuid.UUID, tracks *mutexslice.Slice[uuid.UUID]) {
+	var (
+		err         error
+		numOfTracks int32
+	)
+
+	for numOfTracks == 0 {
+		numOfTracks = rand.Int32N(maxTracksPerAlbum)
+	}
+
+	for i := range int(numOfTracks) {
+		track := &models.Track{
+			AlbumID:      album.ID,
+			OrderInAlbum: i + 1,
+			Genre:        album.Genre,
 		}
 
-		for i := range int(numOfTracks) {
-			track := &models.Track{}
+		if track.ID, err = uuid.NewRandom(); err != nil {
+			slog.Error("", "error", err)
+			continue
+		}
 
-			track.ID, err = uuid.NewRandom()
-			if err != nil {
-				slog.Error("", "error", err)
-				continue
-			}
+		if err = faker.FakeData(track); err != nil {
+			slog.Error("", "error", err)
+			continue
+		}
 
-			err = faker.FakeData(album)
-			album.Genre = artist.Genre
-			if err != nil {
-				slog.Error("", "error", err)
-				continue
-			}
+		if err = m.storage.CreateTrack(ctx, track); err != nil {
+			slog.Error("", "error", err)
+			continue
+		}
 
-			tracks.Add(track.ID)
+		tracks.Add(track.ID)
 
-			listTrack := &models.ListTrack{
-				ID:         track.ID,
-				ListID:     album.ID,
-				TrackOrder: i + 1,
-			}
-
-			if err := m.storage.AddTrackToAlbum(ctx, listTrack); err != nil {
-				slog.Error("", "error", err)
-				continue
-			}
-
-			if err := m.storage.AddArtistTrack(ctx, track.ID, artist.ID); err != nil {
-				slog.Error("", "error", err)
-				continue
-			}
+		if err := m.storage.AddArtistTrack(ctx, track.ID, artistID); err != nil {
+			slog.Error("", "error", err)
+			continue
 		}
 	}
 }
@@ -173,7 +182,7 @@ func (m *MusicService) generateСonsumersData(ctx context.Context, tracks *mutex
 	for range numOfUsers {
 		wg.Add(1)
 		go func(ctx context.Context, sliceOfTracks *mutexslice.Slice[uuid.UUID]) {
-			m.generateUsersWithPlaylists(ctx, sliceOfTracks)
+			m.generateUserWithPlaylists(ctx, sliceOfTracks)
 			wg.Done()
 		}(ctx, tracks)
 	}
@@ -181,49 +190,54 @@ func (m *MusicService) generateСonsumersData(ctx context.Context, tracks *mutex
 	wg.Wait()
 }
 
-func (m *MusicService) generateUsersWithPlaylists(ctx context.Context, tracks *mutexslice.Slice[uuid.UUID]) {
+func (m *MusicService) generateUserWithPlaylists(ctx context.Context, tracks *mutexslice.Slice[uuid.UUID]) {
 	user := &models.User{}
 	err := faker.FakeData(user)
 	if err != nil {
 		slog.Error("", "error", err)
 		return
 	}
-	id, err := uuid.NewRandom()
-	user.ID = id
-	if err != nil {
+
+	if user.ID, err = uuid.NewRandom(); err != nil {
 		slog.Error("", "error", err)
 		return
 	}
 
 	user.BirthDate, user.RegistrationDate, user.PremiumExpiration = randomDates()
 
-	err = m.storage.CreateUser(ctx, user)
-	if err != nil {
+	if err = m.storage.CreateUser(ctx, user); err != nil {
 		slog.Error("", "error", err)
 		return
 	}
 
-	var numOfPlaylists int32
+	m.generatePlaylists(ctx, user, tracks)
+}
+
+func (m *MusicService) generatePlaylists(ctx context.Context, user *models.User, tracks *mutexslice.Slice[uuid.UUID]) {
+	var (
+		err            error
+		numOfPlaylists int32
+	)
 	for numOfPlaylists == 0 {
 		numOfPlaylists = rand.Int32N(maxPlaylistsPerUser)
 	}
 
 	for i := range numOfPlaylists {
-		playlist := &models.Playlist{}
+		playlist := &models.Playlist{
+			LastUpdated: randomDateAfter(user.RegistrationDate),
+		}
 
-		playlist.ID, err = uuid.NewRandom()
-		if err != nil {
+		if playlist.ID, err = uuid.NewRandom(); err != nil {
 			slog.Error("", "error", err)
 			continue
 		}
+
 		if err := faker.FakeData(&playlist); err != nil {
-			log.Fatal(err)
+			slog.Error("", "error", err)
+			continue
 		}
 
-		playlist.LastUpdated = randomLastUpdated()
-
-		err = m.storage.CreatePlaylist(ctx, playlist)
-		if err != nil {
+		if err = m.storage.CreatePlaylist(ctx, playlist); err != nil {
 			slog.Error("", "error", err)
 			continue
 		}
@@ -238,31 +252,34 @@ func (m *MusicService) generateUsersWithPlaylists(ctx context.Context, tracks *m
 			userPlaylist.IsFavorite = true
 		}
 
-		err = m.storage.AddPlaylist(ctx, userPlaylist)
-		if err != nil {
+		if err = m.storage.AddPlaylist(ctx, userPlaylist); err != nil {
 			slog.Error("", "error", err)
 			continue
 		}
 
-		var numOfTracks int32
-		for numOfTracks == 0 {
-			numOfTracks = rand.Int32N(maxTracksPerPlaylist)
+		m.fillPlaylist(ctx, playlist.ID, tracks)
+	}
+}
+
+func (m *MusicService) fillPlaylist(ctx context.Context, playlistID uuid.UUID, tracks *mutexslice.Slice[uuid.UUID]) {
+	var numOfTracks int32
+	for numOfTracks == 0 {
+		numOfTracks = rand.Int32N(maxTracksPerPlaylist)
+	}
+
+	for j := range int(numOfTracks) {
+		trackIdx := rand.Int32N(int32(tracks.Len()))
+
+		listTrack := &models.PlaylistTrack{
+			ID:         tracks.Get(int(trackIdx)),
+			PlaylistID: playlistID,
+			TrackOrder: j + 1,
 		}
 
-		for j := range int(numOfTracks) {
-			trackIdx := rand.Int32N(int32(tracks.Len()))
-
-			listTrack := &models.ListTrack{
-				ID:         tracks.Get(int(trackIdx)),
-				ListID:     playlist.ID,
-				TrackOrder: j + 1,
-			}
-
-			err = m.storage.AddTrackToPlaylist(ctx, listTrack)
-			if err != nil {
-				slog.Error("", "error", err)
-				continue
-			}
+		err := m.storage.AddTrackToPlaylist(ctx, listTrack)
+		if err != nil {
+			slog.Error("", "error", err)
+			continue
 		}
 	}
 }

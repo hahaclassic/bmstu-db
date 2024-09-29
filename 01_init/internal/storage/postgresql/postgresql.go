@@ -102,7 +102,7 @@ func (s *MusicServiceStorage) AddPlaylist(ctx context.Context, userPlaylist *mod
 	return nil
 }
 
-func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *models.ListTrack) error {
+func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *models.PlaylistTrack) error {
 	query := `INSERT INTO playlist_tracks (track_id, playlist_id, date_added, track_order) VALUES ($1, $2, NOW(), `
 
 	var err error
@@ -110,11 +110,11 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *mod
 	if track.TrackOrder == -1 {
 		query += `(SELECT COALESCE(MAX(track_order), 0) + 1 FROM playlist_tracks WHERE playlist_id = $2))`
 
-		_, err = s.db.Exec(ctx, query, track.ID, track.ListID)
+		_, err = s.db.Exec(ctx, query, track.ID, track.PlaylistID)
 	} else {
 		query += `$3)`
 
-		_, err = s.db.Exec(ctx, query, track.ID, track.ListID, track.TrackOrder)
+		_, err = s.db.Exec(ctx, query, track.ID, track.PlaylistID, track.TrackOrder)
 	}
 
 	if err != nil {
@@ -124,7 +124,7 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *mod
 	return nil
 }
 
-func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, track *models.ListTrack) error {
+func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, track *models.PlaylistTrack) error {
 	query := `INSERT INTO album_tracks (track_id, album_id, track_order) VALUES ($1, $2, `
 
 	var err error
@@ -132,11 +132,11 @@ func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, track *models
 	if track.TrackOrder == -1 {
 		query += `(SELECT COALESCE(MAX(track_order), 0) + 1 FROM album_tracks WHERE playlist_id = $2))`
 
-		_, err = s.db.Exec(ctx, query, track.ID, track.ListID)
+		_, err = s.db.Exec(ctx, query, track.ID, track.PlaylistID)
 	} else {
 		query += `$3)`
 
-		_, err = s.db.Exec(ctx, query, track.ID, track.ListID, track.TrackOrder)
+		_, err = s.db.Exec(ctx, query, track.ID, track.PlaylistID, track.TrackOrder)
 	}
 
 	if err != nil {

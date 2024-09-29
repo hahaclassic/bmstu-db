@@ -12,7 +12,7 @@ type Playlist struct {
 	Description string    `faker:"sentence:5"`
 	Private     bool      `faker:"boolean"`
 	Rating      int       `faker:"number:1,5"`
-	LastUpdated time.Time
+	LastUpdated time.Time `faker:"-"`
 }
 
 type UserPlaylist struct {

@@ -5,16 +5,16 @@ build:
 	go build ./cmd/main.go -o generator.exe
 
 create:
-	psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/create_tables.sql
+	PGPASSWORD=$(POSTGRES_PASSWORD) psql -h $(POSTGRES_HOST) -p $(POSTGRES_PORT) -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/create_tables.sql
 
 constraints:
-	psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/add_constraints.sql
+	PGPASSWORD=$(POSTGRES_PASSWORD) psql -h $(POSTGRES_HOST) -p $(POSTGRES_PORT) -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/add_constraints.sql
 
 copy:
-	psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/copy_data.sql
+	PGPASSWORD=$(POSTGRES_PASSWORD) psql -h $(POSTGRES_HOST) -p $(POSTGRES_PORT) -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/copy_data.sql
 
 drop:
-	psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/drop_tables.sql
+	PGPASSWORD=$(POSTGRES_PASSWORD) psql -h $(POSTGRES_HOST) -p $(POSTGRES_PORT) -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/drop_tables.sql
 
 clear: build
 	./generator.exe -d

@@ -9,8 +9,8 @@ import (
 type User struct {
 	ID                uuid.UUID `faker:"-"`
 	Name              string    `faker:"name"`
-	RegistrationDate  time.Time
-	BirthDate         time.Time
-	Premium           bool `faker:"boolean"`
-	PremiumExpiration time.Time
+	RegistrationDate  time.Time `faker:"-"`
+	BirthDate         time.Time `faker:"-"`
+	Premium           bool      `faker:"boolean"`
+	PremiumExpiration time.Time `faker:"-"`
 }

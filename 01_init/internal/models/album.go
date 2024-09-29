@@ -9,7 +9,7 @@ import (
 type Album struct {
 	ID          uuid.UUID `faker:"-"`
 	Title       string    `faker:"sentence:3"`
-	ReleaseDate time.Time
-	Label       string `faker:"word"`
-	Genre       string `faker:"-"`
+	ReleaseDate time.Time `faker:"-"`
+	Label       string    `faker:"word"`
+	Genre       string    `faker:"-"`
 }
