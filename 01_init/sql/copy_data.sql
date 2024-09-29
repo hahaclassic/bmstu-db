@@ -26,3 +26,6 @@ FROM '/data/user_playlists.csv' DELIMITER ',' CSV HEADER;
 
 COPY tracks_by_artists (track_id, artist_id)
 FROM '/data/tracks_by_artists.csv' DELIMITER ',' CSV HEADER;
+
+COPY albums_by_artists (album_id, artist_id)
+FROM '/data/tracks_by_artists.csv' DELIMITER ',' CSV HEADER;
