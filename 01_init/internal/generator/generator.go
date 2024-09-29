@@ -7,6 +7,7 @@ import (
 	"github.com/hahaclassic/databases/01_init/config"
 	"github.com/hahaclassic/databases/01_init/internal/service"
 	"github.com/hahaclassic/databases/01_init/internal/storage"
+	"github.com/hahaclassic/databases/01_init/internal/storage/csv"
 	"github.com/hahaclassic/databases/01_init/internal/storage/postgresql"
 )
 
@@ -21,13 +22,13 @@ func Run(conf *config.Config) {
 	if conf.Generator.OutputCSV == "" {
 		musicStorage, err = postgresql.New(ctx, &conf.Postres)
 	} else {
-		// musicStorage, err = csv.New(conf.Generator.OutputCSV)
+		musicStorage, err = csv.New(conf.Generator.OutputCSV)
 	}
 
 	defer musicStorage.Close()
 
 	if err != nil {
-		slog.Error("[ERR]", err)
+		slog.Error("", "[ERR]", err)
 
 		return
 	}
@@ -43,6 +44,6 @@ func Run(conf *config.Config) {
 	}
 
 	if err != nil {
-		slog.Error("[ERR]", err)
+		slog.Error("", "[ERR]", err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -22,6 +23,7 @@ const (
 	usersPlaylistsFileName = "user_playlists.csv"
 	playlistTracksFileName = "playlist_tracks.csv"
 	albumTracksFileName    = "album_tracks.csv"
+	artistTracksFileName   = "artist_tracks.csv"
 )
 
 type MusicServiceStorage struct {
@@ -33,47 +35,53 @@ type MusicServiceStorage struct {
 	userPlaylistWriter  *csv.Writer
 	playlistTrackWriter *csv.Writer
 	albumTrackWriter    *csv.Writer
+	artistTrackWriter   *csv.Writer
 }
 
 func New(pathToFolder string) (*MusicServiceStorage, error) {
-	artistFile, err := os.Create(filepath.Join(pathToFolder, artistsFileName))
+	artistFile, err := os.Open(filepath.Join(pathToFolder, artistsFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create artists.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", artistsFileName, err)
 	}
 
-	albumFile, err := os.Create(filepath.Join(pathToFolder, albumsFileName))
+	albumFile, err := os.Open(filepath.Join(pathToFolder, albumsFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create albums.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", albumsFileName, err)
 	}
 
-	trackFile, err := os.Create(filepath.Join(pathToFolder, tracksFileName))
+	trackFile, err := os.Open(filepath.Join(pathToFolder, tracksFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create tracks.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", tracksFileName, err)
 	}
 
-	playlistFile, err := os.Create(filepath.Join(pathToFolder, playlistsFileName))
+	playlistFile, err := os.Open(filepath.Join(pathToFolder, playlistsFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create playlists.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", playlistsFileName, err)
 	}
 
-	userFile, err := os.Create(filepath.Join(pathToFolder, usersFileName))
+	userFile, err := os.Open(filepath.Join(pathToFolder, usersFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create users.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", usersFileName, err)
 	}
 
-	userPlaylistFile, err := os.Create(filepath.Join(pathToFolder, usersPlaylistsFileName))
+	userPlaylistFile, err := os.Open(filepath.Join(pathToFolder, usersPlaylistsFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create user_playlists.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", usersPlaylistsFileName, err)
 	}
 
-	playlistTrackFile, err := os.Create(filepath.Join(pathToFolder, playlistTracksFileName))
+	playlistTrackFile, err := os.Open(filepath.Join(pathToFolder, playlistTracksFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create playlist_tracks.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", playlistTracksFileName, err)
 	}
 
-	albumTrackFile, err := os.Create(filepath.Join(pathToFolder, albumTracksFileName))
+	albumTrackFile, err := os.Open(filepath.Join(pathToFolder, albumTracksFileName))
 	if err != nil {
-		return nil, fmt.Errorf("could not create album_tracks.csv: %w", err)
+		return nil, fmt.Errorf("could not create %s: %w", albumTracksFileName, err)
+	}
+
+	artistTrackFile, err := os.Open(filepath.Join(pathToFolder, artistTracksFileName))
+	if err != nil {
+		return nil, fmt.Errorf("could not create %s: %w", artistTracksFileName, err)
 	}
 
 	return &MusicServiceStorage{
@@ -85,6 +93,7 @@ func New(pathToFolder string) (*MusicServiceStorage, error) {
 		userPlaylistWriter:  csv.NewWriter(userPlaylistFile),
 		playlistTrackWriter: csv.NewWriter(playlistTrackFile),
 		albumTrackWriter:    csv.NewWriter(albumTrackFile),
+		artistTrackWriter:   csv.NewWriter(artistTrackFile),
 	}, nil
 }
 
@@ -143,7 +152,7 @@ func (s *MusicServiceStorage) CreateUser(ctx context.Context, user *models.User)
 }
 
 func (s *MusicServiceStorage) AddPlaylist(ctx context.Context, userPlaylist *models.UserPlaylist) error {
-	record := []string{userPlaylist.PlaylistID.String(), userPlaylist.UserID.String(),
+	record := []string{userPlaylist.ID.String(), userPlaylist.UserID.String(),
 		fmt.Sprintf("%t", userPlaylist.IsFavorite), fmt.Sprintf("%d", userPlaylist.AccessLevel)}
 	if err := s.userPlaylistWriter.Write(record); err != nil {
 		return fmt.Errorf("%w: %v", storage.ErrAddPlaylist, err)
@@ -152,8 +161,8 @@ func (s *MusicServiceStorage) AddPlaylist(ctx context.Context, userPlaylist *mod
 	return nil
 }
 
-func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, trackID uuid.UUID, playlistID uuid.UUID) error {
-	record := []string{trackID.String(), playlistID.String(), time.Now().Format(time.RFC3339), "1"} // No data about last track in playlist
+func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *models.ListTrack) error {
+	record := []string{track.ID.String(), track.ListID.String(), time.Now().Format(time.RFC3339), strconv.Itoa(track.TrackOrder)}
 	if err := s.playlistTrackWriter.Write(record); err != nil {
 		return fmt.Errorf("%w: %v", storage.ErrAddTrackToPlaylist, err)
 	}
@@ -161,11 +170,32 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, trackID uu
 	return nil
 }
 
-func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, trackID uuid.UUID, albumID uuid.UUID) error {
-	record := []string{trackID.String(), albumID.String(), "1"} // No data about last track in album
+func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, track *models.ListTrack) error {
+	record := []string{track.ID.String(), track.ListID.String(), strconv.Itoa(track.TrackOrder)}
 	if err := s.albumTrackWriter.Write(record); err != nil {
 		return fmt.Errorf("%w: %v", storage.ErrAddTrackToAlbum, err)
 	}
+
+	return nil
+}
+
+func (s *MusicServiceStorage) AddArtistTrack(ctx context.Context, trackID uuid.UUID, artistID uuid.UUID) error {
+	record := []string{trackID.String(), artistID.String()}
+
+	if err := s.artistTrackWriter.Write(record); err != nil {
+		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)
+	}
+
+	return nil
+}
+
+func (s *MusicServiceStorage) AddArtistAlbum(ctx context.Context, albumID uuid.UUID, artistID uuid.UUID) error {
+	record := []string{albumID.String(), artistID.String()}
+
+	if err := s.artistTrackWriter.Write(record); err != nil {
+		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)
+	}
+
 	return nil
 }
 

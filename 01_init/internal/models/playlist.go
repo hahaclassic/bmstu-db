@@ -16,7 +16,7 @@ type Playlist struct {
 }
 
 type UserPlaylist struct {
-	PlaylistID  uuid.UUID
+	ID          uuid.UUID
 	UserID      uuid.UUID
 	IsFavorite  bool
 	AccessLevel int
