@@ -131,8 +131,8 @@ func (s *MusicServiceStorage) writeHeaders() error {
 		tracksFileName:         {"id", "name", "order_in_album", "album_id", "explicit", "duration", "genre", "stream_count"},
 		playlistsFileName:      {"id", "title", "description", "private", "last_updated", "rating"},
 		usersFileName:          {"id", "name", "registration_date", "birth_date", "premium", "premium_expiration"},
-		usersPlaylistsFileName: {"track_id", "playlist_id", "date_added", "track_order"},
-		playlistTracksFileName: {"playlist_id", "user_id", "is_favorite", "access_level"},
+		usersPlaylistsFileName: {"playlist_id", "user_id", "is_favorite", "access_level"},
+		playlistTracksFileName: {"track_id", "playlist_id", "date_added", "track_order"},
 		artistTracksFileName:   {"track_id", "artist_id"},
 		artistAlbumFileName:    {"album_id", "artist_id"},
 	}
