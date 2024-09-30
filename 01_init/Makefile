@@ -2,7 +2,7 @@ include .env
 export $(shell sed 's/=.*//' .env)
 
 build:
-	go build ./cmd/main.go -o generator.exe
+	go build -o generator.exe ./cmd/generator/main.go
 
 create:
 	PGPASSWORD=$(POSTGRES_PASSWORD) psql -h $(POSTGRES_HOST) -p $(POSTGRES_PORT) -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f ./sql/create_tables.sql

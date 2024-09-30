@@ -21,8 +21,25 @@ var genres = []string{
 	"Alternative Hip-hop", "Chamber", "World", "Celtic", "Musical Theatre",
 }
 
-func randGenre() string {
+func randomGenre() string {
 	return genres[rand.IntN(len(genres))]
+}
+
+var countries = []string{
+	"Russia", "USA", "Canada", "Germany", "France", "United Kingdom", "Italy", "Spain", "China", "Japan",
+	"Australia", "India", "Brazil", "Mexico", "South Korea", "Netherlands", "Turkey", "Sweden", "Norway",
+	"Finland", "Denmark", "Belgium", "Switzerland", "Austria", "Ireland", "New Zealand", "South Africa",
+	"Argentina", "Chile", "Colombia", "Saudi Arabia", "United Arab Emirates", "Singapore", "Malaysia",
+	"Thailand", "Philippines", "Vietnam", "Israel", "Greece", "Portugal", "Czech Republic", "Hungary",
+	"Romania", "Poland", "Ukraine", "Slovakia", "Slovenia", "Croatia", "Bulgaria", "Serbia",
+}
+
+func randomCountry() string {
+	return countries[rand.IntN(len(countries))]
+}
+
+func randomBool() bool {
+	return rand.IntN(2) != 0
 }
 
 func randomDates() (time.Time, time.Time, time.Time) {

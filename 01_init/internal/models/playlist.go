@@ -7,11 +7,11 @@ import (
 )
 
 type Playlist struct {
-	ID          uuid.UUID `faker:"-"`
-	Title       string    `faker:"sentence:3"`
-	Description string    `faker:"sentence:5"`
-	Private     bool      `faker:"boolean"`
-	Rating      int       `faker:"number:1,5"`
+	ID          uuid.UUID `fake:"-"`
+	Title       string    `fake:"{sentence:3}"`
+	Description string    `fake:"{sentence:6}"`
+	Private     bool      `fake:"-"`
+	Rating      int       `fake:"{number:1,25}"`
 	LastUpdated time.Time `faker:"-"`
 }
 

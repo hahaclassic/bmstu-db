@@ -7,6 +7,13 @@ type Slice[T any] struct {
 	data []T
 }
 
+func New[T any]() *Slice[T] {
+	return &Slice[T]{
+		mu:   &sync.RWMutex{},
+		data: make([]T, 0),
+	}
+}
+
 func (s *Slice[T]) Add(elem T) {
 	s.mu.Lock()
 	s.data = append(s.data, elem)
@@ -17,7 +24,13 @@ func (s *Slice[T]) Get(idx int) T {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	return s.data[idx]
+	if idx < s.Len() {
+		return s.data[idx]
+	}
+
+	var val T
+
+	return val
 }
 
 func (s *Slice[T]) Len() int {

@@ -7,14 +7,14 @@ import (
 )
 
 type Track struct {
-	ID           uuid.UUID `faker:"-"`
-	Name         string    `faker:"sentence:3"`
-	Explicit     bool      `faker:"boolean"`
-	Duration     int       `faker:"number:180,300"` // duration in seconds
-	Genre        string    `faker:"-"`
-	StreamCount  int64     `faker:"number:1000,50000"`
-	OrderInAlbum int       `faker:"-"`
-	AlbumID      uuid.UUID `faker:"-"`
+	ID           uuid.UUID `fake:"-"`
+	Name         string    `fake:"{sentence:3}"`
+	Explicit     bool      `fake:"-"`
+	Duration     int       `fake:"{number:180,300}"` // duration in seconds
+	Genre        string    `fake:"-"`
+	StreamCount  int64     `fake:"{number:1000,5000000}"`
+	OrderInAlbum int       `fake:"-"`
+	AlbumID      uuid.UUID `fake:"-"`
 }
 
 type PlaylistTrack struct {

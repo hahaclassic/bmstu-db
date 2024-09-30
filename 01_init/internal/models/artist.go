@@ -5,9 +5,9 @@ import (
 )
 
 type Artist struct {
-	ID        uuid.UUID `faker:"-"`
-	Name      string    `faker:"word"`
-	Genre     string    `faker:"-"`
-	Country   string    `faker:"country"`
-	DebutYear int       `faker:"year"`
+	ID        uuid.UUID `fake:"-"`
+	Name      string    `fake:"{sentence:1}"`
+	Genre     string    `fake:"-"`
+	Country   string    `fake:"-"`
+	DebutYear int       `fake:"-"`
 }
