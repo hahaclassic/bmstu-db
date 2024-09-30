@@ -59,9 +59,11 @@ func (s *MusicServiceStorage) CreateAlbum(ctx context.Context, album *models.Alb
 }
 
 func (s *MusicServiceStorage) CreateTrack(ctx context.Context, track *models.Track) error {
-	query := `INSERT INTO tracks (id, name, explicit, duration, genre, stream_count) VALUES ($1, $2, $3, $4, $5, $6)`
+	query := `INSERT INTO tracks (id, name, order_in_album, album_id, explicit, duration, genre, stream_count) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	_, err := s.db.Exec(ctx, query, track.ID, track.Name, track.Explicit, track.Duration, track.Genre, track.StreamCount)
+	_, err := s.db.Exec(ctx, query, track.ID, track.Name,
+		track.OrderInAlbum, track.AlbumID, track.Explicit,
+		track.Duration, track.Genre, track.StreamCount)
 	if err != nil {
 		return fmt.Errorf("%w: %v", storage.ErrCreateTrack, err)
 	}
@@ -124,28 +126,6 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *mod
 	return nil
 }
 
-func (s *MusicServiceStorage) AddTrackToAlbum(ctx context.Context, track *models.PlaylistTrack) error {
-	query := `INSERT INTO album_tracks (track_id, album_id, track_order) VALUES ($1, $2, `
-
-	var err error
-
-	if track.TrackOrder == -1 {
-		query += `(SELECT COALESCE(MAX(track_order), 0) + 1 FROM album_tracks WHERE playlist_id = $2))`
-
-		_, err = s.db.Exec(ctx, query, track.ID, track.PlaylistID)
-	} else {
-		query += `$3)`
-
-		_, err = s.db.Exec(ctx, query, track.ID, track.PlaylistID, track.TrackOrder)
-	}
-
-	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddTrackToAlbum, err)
-	}
-
-	return nil
-}
-
 func (s *MusicServiceStorage) AddArtistTrack(ctx context.Context, trackID uuid.UUID, artistID uuid.UUID) error {
 	query := `INSERT INTO tracks_by_artists (track_id, album_id) VALUES ($1, $2)`
 
@@ -168,16 +148,15 @@ func (s *MusicServiceStorage) AddArtistAlbum(ctx context.Context, albumID uuid.U
 
 func (s *MusicServiceStorage) DeleteAll(ctx context.Context) error {
 	tables := []string{
-		"user_playlists",
+		"artists",
+		"albums",
+		"tracks",
+		"playlists",
+		"users",
 		"playlist_tracks",
-		"album_tracks",
+		"user_playlists",
 		"tracks_by_artists",
 		"albums_by_artists",
-		"tracks",
-		"albums",
-		"artists",
-		"users",
-		"playlists",
 	}
 
 	for _, table := range tables {
