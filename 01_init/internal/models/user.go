@@ -11,6 +11,6 @@ type User struct {
 	Name              string    `fake:"{username}"`
 	RegistrationDate  time.Time `fake:"-"`
 	BirthDate         time.Time `fake:"-"`
-	Premium           bool      `fake:"-"`
+	Premium           bool      `fake:"{bool}"`
 	PremiumExpiration time.Time `fake:"-"`
 }

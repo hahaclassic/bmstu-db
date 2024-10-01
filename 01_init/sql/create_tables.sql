@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS artists (
     id UUID PRIMARY KEY,
     name VARCHAR(100),
     genre VARCHAR(50),
-    country VARCHAR(50),
+    country VARCHAR(100),
     debut_year INT
 );
 

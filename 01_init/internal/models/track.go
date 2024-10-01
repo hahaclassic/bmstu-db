@@ -11,7 +11,7 @@ type Track struct {
 	Name         string    `fake:"{sentence:3}"`
 	OrderInAlbum int       `fake:"-"`
 	AlbumID      uuid.UUID `fake:"-"`
-	Explicit     bool      `fake:"-"`
+	Explicit     bool      `fake:"{bool}"`
 	Duration     int       `fake:"{number:180,300}"` // duration in seconds
 	Genre        string    `fake:"-"`
 	StreamCount  int64     `fake:"{number:1000,5000000}"`

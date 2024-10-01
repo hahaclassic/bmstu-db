@@ -109,7 +109,7 @@ func (m *MusicService) generateArtistWithAlbumsAndTracks(ctx context.Context) er
 
 	artist := &models.Artist{
 		Genre:     randomGenre(),
-		Country:   randomCountry(),
+		Country:   fake.Country(),
 		DebutYear: randomDateAfter(time.Date(1920, 1, 1, 0, 0, 0, 0, time.UTC)).Year(),
 		Name:      m.randomArtistName(),
 	}
@@ -270,9 +270,7 @@ func (m *MusicService) generateUserWithPlaylists(ctx context.Context) error {
 	errChan := make(chan error)
 
 	generateUser := func(ctx context.Context, errChan chan error) {
-		user := &models.User{
-			Premium: randomBool(),
-		}
+		user := &models.User{}
 		err := fake.Struct(user)
 		if err != nil {
 			errChan <- err
