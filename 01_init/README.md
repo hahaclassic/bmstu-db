@@ -4,7 +4,7 @@ Note: generation takes place without transactions
 
 Note: Many things are hardcoded, but if desired, it can be fixed at any time
 
-# ER-diagram
-![er-diagram.png](./diagram/er-diagram.drawio.png)
-
+# Diagrams
 ![image.png](./diagram/image.png)
+
+![er-diagram.png](./diagram/er-diagram.drawio.png)
