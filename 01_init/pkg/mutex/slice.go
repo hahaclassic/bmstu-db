@@ -1,4 +1,4 @@
-package mutexslice
+package mutex
 
 import "sync"
 
@@ -7,7 +7,7 @@ type Slice[T any] struct {
 	data []T
 }
 
-func New[T any]() *Slice[T] {
+func NewSlice[T any]() *Slice[T] {
 	return &Slice[T]{
 		mu:   &sync.RWMutex{},
 		data: make([]T, 0),

@@ -72,9 +72,9 @@ func (s *MusicServiceStorage) CreateTrack(ctx context.Context, track *models.Tra
 }
 
 func (s *MusicServiceStorage) CreatePlaylist(ctx context.Context, playlist *models.Playlist) error {
-	query := `INSERT INTO playlists (id, title, description, private, last_updated, rating) VALUES ($1, $2, $3, $4, $5, $6)`
+	query := `INSERT INTO playlists (id, title, description, private, rating) VALUES ($1, $2, $3, $4, $5)`
 
-	_, err := s.db.Exec(ctx, query, playlist.ID, playlist.Title, playlist.Description, playlist.Private, playlist.LastUpdated, playlist.Rating)
+	_, err := s.db.Exec(ctx, query, playlist.ID, playlist.Title, playlist.Description, playlist.Private, playlist.Rating)
 	if err != nil {
 		return fmt.Errorf("%w: %v", storage.ErrCreatePlaylist, err)
 	}
@@ -105,7 +105,7 @@ func (s *MusicServiceStorage) AddPlaylist(ctx context.Context, userPlaylist *mod
 }
 
 func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *models.PlaylistTrack) error {
-	query := `INSERT INTO playlist_tracks (track_id, playlist_id, date_added, track_order) VALUES ($1, $2, NOW(), `
+	query := `INSERT INTO playlist_tracks (track_id, playlist_id, track_order) VALUES ($1, $2, `
 
 	var err error
 
@@ -127,7 +127,7 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *mod
 }
 
 func (s *MusicServiceStorage) AddArtistTrack(ctx context.Context, trackID uuid.UUID, artistID uuid.UUID) error {
-	query := `INSERT INTO tracks_by_artists (track_id, album_id) VALUES ($1, $2)`
+	query := `INSERT INTO tracks_by_artists (track_id, artist_id) VALUES ($1, $2)`
 
 	if _, err := s.db.Exec(ctx, query, trackID, artistID); err != nil {
 		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)

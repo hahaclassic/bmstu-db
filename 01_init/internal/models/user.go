@@ -8,7 +8,7 @@ import (
 
 type User struct {
 	ID                uuid.UUID `fake:"-"`
-	Name              string    `fake:"{firstname}"`
+	Name              string    `fake:"{username}"`
 	RegistrationDate  time.Time `fake:"-"`
 	BirthDate         time.Time `fake:"-"`
 	Premium           bool      `fake:"-"`

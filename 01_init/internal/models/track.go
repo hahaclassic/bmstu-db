@@ -9,12 +9,12 @@ import (
 type Track struct {
 	ID           uuid.UUID `fake:"-"`
 	Name         string    `fake:"{sentence:3}"`
+	OrderInAlbum int       `fake:"-"`
+	AlbumID      uuid.UUID `fake:"-"`
 	Explicit     bool      `fake:"-"`
 	Duration     int       `fake:"{number:180,300}"` // duration in seconds
 	Genre        string    `fake:"-"`
 	StreamCount  int64     `fake:"{number:1000,5000000}"`
-	OrderInAlbum int       `fake:"-"`
-	AlbumID      uuid.UUID `fake:"-"`
 }
 
 type PlaylistTrack struct {

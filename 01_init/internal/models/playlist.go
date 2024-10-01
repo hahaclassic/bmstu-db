@@ -19,5 +19,5 @@ type UserPlaylist struct {
 	ID          uuid.UUID
 	UserID      uuid.UUID
 	IsFavorite  bool
-	AccessLevel int
+	AccessLevel AccessLevel
 }

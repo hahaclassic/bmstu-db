@@ -2,9 +2,7 @@
 
 Note: генерация происходит без транзакций
 
-# TODO
-1. Прокинуть csv файлы через компоуз 
-2. Реализовать генерацию данных, включая данные дочерних таблиц 
-
 # ER-diagram
 ![er-diagram.png](./diagram/er-diagram.drawio.png)
+
+![image.png](./diagram/image.png)

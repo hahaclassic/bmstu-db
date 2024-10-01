@@ -6,7 +6,7 @@ import (
 
 type Artist struct {
 	ID        uuid.UUID `fake:"-"`
-	Name      string    `fake:"{sentence:1}"`
+	Name      string    `fake:"-"`
 	Genre     string    `fake:"-"`
 	Country   string    `fake:"-"`
 	DebutYear int       `fake:"-"`

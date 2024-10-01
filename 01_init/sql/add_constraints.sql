@@ -15,8 +15,8 @@ ADD CONSTRAINT unique_album_track_order UNIQUE (album_id, order_in_album);
 
 ALTER TABLE playlists
 ADD CONSTRAINT check_rating CHECK (rating >= 0),
-ADD CONSTRAINT check_last_updated CHECK (last_updated <= CURRENT_DATE),
-ALTER COLUMN last_updated SET DEFAULT CURRENT_TIMESTAMP;
+ALTER COLUMN last_updated SET DEFAULT CURRENT_TIMESTAMP,
+ADD CONSTRAINT check_last_updated CHECK (last_updated <= CURRENT_TIMESTAMP);
 
 ALTER TABLE users
 ADD CONSTRAINT check_birth_date CHECK (birth_date > '1900-01-01'),
@@ -28,9 +28,10 @@ ADD CONSTRAINT fk_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlists(id)
 ALTER COLUMN track_id SET NOT NULL,
 ALTER COLUMN playlist_id SET NOT NULL,
 ADD CONSTRAINT check_order_in_playlist CHECK (track_order >= 1),
+ADD CONSTRAINT check_date_added CHECK (date_added <= CURRENT_TIMESTAMP),
 ALTER COLUMN date_added SET DEFAULT CURRENT_TIMESTAMP,
-ADD CONSTRAINT check_date_added CHECK (date_added <= CURRENT_DATE),
-ADD CONSTRAINT unique_playlist_track_order UNIQUE (playlist_id, track_order);
+ADD CONSTRAINT unique_playlist_track_order UNIQUE (playlist_id, track_order),
+ADD CONSTRAINT unique_playlist_track UNIQUE (playlist_id, track_id);
 
 ALTER TABLE user_playlists
 ADD CONSTRAINT fk_user_playlist_playlist FOREIGN KEY (playlist_id) REFERENCES playlists(id),

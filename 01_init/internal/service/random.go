@@ -8,8 +8,8 @@ import (
 const (
 	maxAlbumsPerArtist   = 5
 	maxTracksPerAlbum    = 20
-	maxPlaylistsPerUser  = 10
-	maxTracksPerPlaylist = 30
+	maxPlaylistsPerUser  = 5
+	maxTracksPerPlaylist = 25
 )
 
 var genres = []string{
@@ -43,13 +43,13 @@ func randomBool() bool {
 }
 
 func randomDates() (time.Time, time.Time, time.Time) {
-	min := time.Date(1900, 1, 1, 0, 0, 0, 0, time.UTC)
-	max := time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)
+	min := time.Date(1950, 1, 1, 0, 0, 0, 0, time.UTC)
+	max := time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC)
 	seconds := rand.Int64N(max.Unix() - min.Unix())
 
 	birth := min.Add(time.Duration(seconds) * time.Second)
 
-	min = birth
+	min = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	max = time.Now()
 	seconds = rand.Int64N(max.Unix() - min.Unix())
 
