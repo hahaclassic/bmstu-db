@@ -1,6 +1,8 @@
-# Создание и наполнение базы данных музыкального сервиса
+# Creation and filling of the music service database
 
-Note: генерация происходит без транзакций
+Note: generation takes place without transactions
+
+Note: Many things are hardcoded, but if desired, it can be fixed at any time
 
 # ER-diagram
 ![er-diagram.png](./diagram/er-diagram.drawio.png)
