@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"math/rand/v2"
 	"runtime"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -153,9 +154,11 @@ func (m *MusicService) randomArtistName() string {
 
 	name := fake.Sentence(int(numOfWords))
 	name = name[:len(name)-1]
-	for m.uniq.artistNames.Contains(name) {
+	words := strings.Split(name, " ")
+	for (len(words) == 1 && len(words[0]) < 5) || m.uniq.artistNames.Contains(name) {
 		name = fake.Sentence(int(numOfWords))
 		name = name[:len(name)-1]
+		words = strings.Split(name, " ")
 	}
 
 	return name
