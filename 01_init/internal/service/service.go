@@ -406,5 +406,7 @@ func (m *MusicService) DeleteAll(ctx context.Context) error {
 		return fmt.Errorf("%w: %v", ErrDeleteAll, err)
 	}
 
+	slog.Info("[OK]: All data deleted.")
+
 	return nil
 }
