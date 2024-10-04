@@ -8,6 +8,7 @@ import (
 	"math/rand/v2"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	fake "github.com/brianvoe/gofakeit/v7"
@@ -15,17 +16,26 @@ import (
 	"github.com/hahaclassic/databases/01_init/internal/models"
 	"github.com/hahaclassic/databases/01_init/internal/storage"
 	"github.com/hahaclassic/databases/01_init/pkg/mutex"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 var (
 	ErrExceededContextTime error = errors.New("exceeded context time")
 	ErrGenerateData        error = errors.New("failed to generate data")
 	ErrDeleteAll           error = errors.New("failed to delete all data")
+	ErrDuplicate           error = errors.New("duplicate key")
+)
+
+const (
+	DuplicateSQLCode = "23505"
 )
 
 type UniqueController struct {
 	artistNames *mutex.Collection[string]
 	tracks      *mutex.Slice[uuid.UUID]
+	users       atomic.Int64
+	playlists   atomic.Int64
+	albums      atomic.Int64
 }
 
 type MusicService struct {
@@ -43,38 +53,38 @@ func New(storage storage.MusicServiceStorage) *MusicService {
 	}
 }
 
-func (m *MusicService) Generate(ctx context.Context, recordsPerTable int) (err error) {
-	defer func() {
-		if err != nil {
-			err = fmt.Errorf("%w: %v", ErrGenerateData, err)
-		}
-	}()
-
+func (m *MusicService) Generate(ctx context.Context, recordsPerTable int) error {
 	_ = fake.Seed(0)
 
-	err = m.generateProducersData(ctx, recordsPerTable)
+	// Generates data about artists, albums, tracks
+	err := m.generate(ctx, recordsPerTable, m.generateArtistWithAlbumsAndTracks)
 	if err != nil {
 		return err
 	}
 
-	err = m.generateСonsumersData(ctx, recordsPerTable)
+	// Generates data about users, playlists and added track into playlists
+	err = m.generate(ctx, recordsPerTable, m.generateUserWithPlaylists)
 	if err != nil {
 		return err
 	}
 
-	slog.Info("RESULT", "artists", m.uniq.artistNames.Len(), "tracks", m.uniq.tracks.Len())
+	fmt.Println("\nRESULT",
+		"\n- artists:", m.uniq.artistNames.Len(),
+		"\n- albums:", m.uniq.albums.Load(),
+		"\n- tracks:", m.uniq.tracks.Len(),
+		"\n- users:", m.uniq.users.Load(),
+		"\n- playlists:", m.uniq.playlists.Load())
 
 	return nil
 }
 
-// Generates data about artists, albums, tracks
-func (m *MusicService) generateProducersData(ctx context.Context, numOfArtists int) error {
+func (m *MusicService) generate(ctx context.Context, num int, generator func(context.Context) error) error {
 	workers := runtime.GOMAXPROCS(0)
-	artistsPerWorker := int(float64(numOfArtists) / float64(workers))
+	numPerWorker := int(float64(num) / float64(workers))
 
-	if workers >= numOfArtists {
-		workers = numOfArtists
-		artistsPerWorker = 1
+	if workers >= num {
+		workers = num
+		numPerWorker = 1
 	}
 
 	wg := &sync.WaitGroup{}
@@ -83,8 +93,8 @@ func (m *MusicService) generateProducersData(ctx context.Context, numOfArtists i
 	for i := range workers {
 		wg.Add(1)
 		go func(ctx context.Context, idx int) {
-			for range artistsPerWorker {
-				errChan <- m.generateArtistWithAlbumsAndTracks(ctx)
+			for range numPerWorker {
+				errChan <- generator(ctx)
 			}
 			wg.Done()
 		}(ctx, i)
@@ -96,7 +106,9 @@ func (m *MusicService) generateProducersData(ctx context.Context, numOfArtists i
 	}()
 
 	for err := range errChan {
-		if err != nil {
+		if errors.Is(err, ErrDuplicate) {
+			slog.Error("DUPLICATE", "err", err)
+		} else if err != nil {
 			return err
 		}
 	}
@@ -119,7 +131,12 @@ func (m *MusicService) generateArtistWithAlbumsAndTracks(ctx context.Context) er
 		return err
 	}
 
-	if err := m.storage.CreateArtist(ctx, artist); err != nil {
+	var perr *pgconn.PgError
+	err = m.storage.CreateArtist(ctx, artist)
+	if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+		return fmt.Errorf("%w: artist '%s' already exists", ErrDuplicate, artist.Name)
+	}
+	if err != nil {
 		return fmt.Errorf("%w: err with artist %v", err, artist)
 	}
 
@@ -169,9 +186,16 @@ func (m *MusicService) generateAlbums(ctx context.Context, artist *models.Artist
 		album.Title = album.Title[:len(album.Title)-1]
 		album.Label = album.Label[:len(album.Label)-1]
 
-		if err := m.storage.CreateAlbum(ctx, album); err != nil {
+		var perr *pgconn.PgError
+		err = m.storage.CreateAlbum(ctx, album)
+		if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+			continue
+		}
+		if err != nil {
 			return fmt.Errorf("%w: err with album %v", err, album)
 		}
+
+		m.uniq.albums.Add(1)
 
 		if err := m.storage.AddArtistAlbum(ctx, album.ID, artist.ID); err != nil {
 			return fmt.Errorf("%w: err with artistAlbum %s %s", err, album.ID, artist.ID)
@@ -212,7 +236,12 @@ func (m *MusicService) generateTracks(ctx context.Context, album *models.Album, 
 
 		track.Name = track.Name[:len(track.Name)-1]
 
-		if err = m.storage.CreateTrack(ctx, track); err != nil {
+		var perr *pgconn.PgError
+		err = m.storage.CreateTrack(ctx, track)
+		if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+			continue
+		}
+		if err != nil {
 			return fmt.Errorf("%w: err with track %v", err, track)
 		}
 
@@ -220,46 +249,6 @@ func (m *MusicService) generateTracks(ctx context.Context, album *models.Album, 
 
 		if err := m.storage.AddArtistTrack(ctx, track.ID, artistID); err != nil {
 			return fmt.Errorf("%w: err with artistTrack %s, %s", err, track.ID, artistID)
-		}
-	}
-
-	return nil
-}
-
-// Generates data about users, playlists and added track into playlists
-func (m *MusicService) generateСonsumersData(ctx context.Context, numOfUsers int) error {
-	workers := runtime.GOMAXPROCS(0)
-	usersPerWorker := int(float64(numOfUsers) / float64(workers))
-
-	if workers >= numOfUsers {
-		workers = numOfUsers
-		usersPerWorker = 1
-	}
-
-	wg := &sync.WaitGroup{}
-	errChan := make(chan error)
-
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
-
-	for i := range workers {
-		wg.Add(1)
-		go func(ctx context.Context, idx int) {
-			for range usersPerWorker {
-				errChan <- m.generateUserWithPlaylists(ctx)
-			}
-			wg.Done()
-		}(ctx, i)
-	}
-
-	go func() {
-		wg.Wait()
-		close(errChan)
-	}()
-
-	for err := range errChan {
-		if err != nil {
-			return err
 		}
 	}
 
@@ -284,10 +273,18 @@ func (m *MusicService) generateUserWithPlaylists(ctx context.Context) error {
 
 		user.BirthDate, user.RegistrationDate, user.PremiumExpiration = randomDates()
 
-		if err = m.storage.CreateUser(ctx, user); err != nil {
+		var perr *pgconn.PgError
+		err = m.storage.CreateUser(ctx, user)
+		if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+			errChan <- fmt.Errorf("%w: user '%s' already exists", ErrDuplicate, user.ID)
+			return
+		}
+		if err != nil {
 			errChan <- fmt.Errorf("%w: err with user %v", err, user)
 			return
 		}
+
+		m.uniq.users.Add(1)
 
 		errChan <- m.generatePlaylists(ctx, user)
 	}
@@ -328,7 +325,12 @@ func (m *MusicService) generatePlaylists(ctx context.Context, user *models.User)
 			return fmt.Errorf("%w: err with playlist %v", err, playlist)
 		}
 
-		if err = m.storage.CreatePlaylist(ctx, playlist); err != nil {
+		var perr *pgconn.PgError
+		err = m.storage.CreatePlaylist(ctx, playlist)
+		if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+			continue
+		}
+		if err != nil {
 			return fmt.Errorf("%w: err with playlist %v", err, playlist)
 		}
 
@@ -342,9 +344,16 @@ func (m *MusicService) generatePlaylists(ctx context.Context, user *models.User)
 			userPlaylist.IsFavorite = true
 		}
 
-		if err = m.storage.AddPlaylist(ctx, userPlaylist); err != nil {
+		err = m.storage.AddPlaylist(ctx, userPlaylist)
+		if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+			slog.Error("DUPLICATE", "err", err)
+			continue
+		}
+		if err != nil {
 			return fmt.Errorf("%w: err with userPlaylist: %v", err, userPlaylist)
 		}
+
+		m.uniq.playlists.Add(1)
 
 		if err = m.fillPlaylist(ctx, playlist.ID); err != nil {
 			return fmt.Errorf("%w: err with fill playlist: %v", err, playlist)
@@ -376,7 +385,11 @@ func (m *MusicService) fillPlaylist(ctx context.Context, playlistID uuid.UUID) e
 			TrackOrder: j + 1,
 		}
 
+		var perr *pgconn.PgError
 		err := m.storage.AddTrackToPlaylist(ctx, playlistTrack)
+		if ok := errors.As(err, &perr); ok && perr.Code == DuplicateSQLCode {
+			continue
+		}
 		if err != nil {
 			return fmt.Errorf("%w: err with playlistTrack: %v", err, playlistTrack)
 		}

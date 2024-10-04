@@ -41,7 +41,7 @@ func (s *MusicServiceStorage) CreateArtist(ctx context.Context, artist *models.A
 
 	_, err := s.db.Exec(ctx, query, artist.ID, artist.Name, artist.Genre, artist.Country, artist.DebutYear)
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateArtist, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateArtist, err)
 	}
 
 	return nil
@@ -52,7 +52,7 @@ func (s *MusicServiceStorage) CreateAlbum(ctx context.Context, album *models.Alb
 
 	_, err := s.db.Exec(ctx, query, album.ID, album.Title, album.ReleaseDate, album.Label, album.Genre)
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateAlbum, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateAlbum, err)
 	}
 
 	return nil
@@ -65,7 +65,7 @@ func (s *MusicServiceStorage) CreateTrack(ctx context.Context, track *models.Tra
 		track.OrderInAlbum, track.AlbumID, track.Explicit,
 		track.Duration, track.Genre, track.StreamCount)
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateTrack, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateTrack, err)
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func (s *MusicServiceStorage) CreatePlaylist(ctx context.Context, playlist *mode
 
 	_, err := s.db.Exec(ctx, query, playlist.ID, playlist.Title, playlist.Description, playlist.Private, playlist.Rating)
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreatePlaylist, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreatePlaylist, err)
 	}
 
 	return nil
@@ -87,7 +87,7 @@ func (s *MusicServiceStorage) CreateUser(ctx context.Context, user *models.User)
 
 	_, err := s.db.Exec(ctx, query, user.ID, user.Name, user.RegistrationDate, user.BirthDate, user.Premium, user.PremiumExpiration)
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateUser, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateUser, err)
 	}
 
 	return nil
@@ -98,7 +98,7 @@ func (s *MusicServiceStorage) AddPlaylist(ctx context.Context, userPlaylist *mod
 
 	_, err := s.db.Exec(ctx, query, userPlaylist.ID, userPlaylist.UserID, userPlaylist.IsFavorite, userPlaylist.AccessLevel)
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddPlaylist, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddPlaylist, err)
 	}
 
 	return nil
@@ -120,7 +120,7 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *mod
 	}
 
 	if err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddTrackToPlaylist, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddTrackToPlaylist, err)
 	}
 
 	return nil
@@ -130,7 +130,7 @@ func (s *MusicServiceStorage) AddArtistTrack(ctx context.Context, trackID uuid.U
 	query := `INSERT INTO tracks_by_artists (track_id, artist_id) VALUES ($1, $2)`
 
 	if _, err := s.db.Exec(ctx, query, trackID, artistID); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddArtistTrack, err)
 	}
 
 	return nil
@@ -140,7 +140,7 @@ func (s *MusicServiceStorage) AddArtistAlbum(ctx context.Context, albumID uuid.U
 	query := `INSERT INTO albums_by_artists (album_id, artist_id) VALUES ($1, $2)`
 
 	if _, err := s.db.Exec(ctx, query, albumID, artistID); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddArtistTrack, err)
 	}
 
 	return nil

@@ -167,7 +167,7 @@ func (s *MusicServiceStorage) CreateArtist(ctx context.Context, artist *models.A
 		artist.Country, fmt.Sprintf("%d", artist.DebutYear)}
 
 	if err := s.writers[artistsFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateArtist, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateArtist, err)
 	}
 
 	return nil
@@ -180,7 +180,7 @@ func (s *MusicServiceStorage) CreateAlbum(ctx context.Context, album *models.Alb
 	record := []string{album.ID.String(), album.Title, album.ReleaseDate.Format("2006-01-02"), album.Label, album.Genre}
 
 	if err := s.writers[albumsFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateAlbum, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateAlbum, err)
 	}
 
 	return nil
@@ -195,7 +195,7 @@ func (s *MusicServiceStorage) CreateTrack(ctx context.Context, track *models.Tra
 		track.Genre, fmt.Sprintf("%d", track.StreamCount)}
 
 	if err := s.writers[tracksFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateTrack, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateTrack, err)
 	}
 
 	return nil
@@ -210,7 +210,7 @@ func (s *MusicServiceStorage) CreatePlaylist(ctx context.Context, playlist *mode
 		fmt.Sprintf("%d", playlist.Rating)}
 
 	if err := s.writers[playlistsFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreatePlaylist, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreatePlaylist, err)
 	}
 
 	return nil
@@ -225,7 +225,7 @@ func (s *MusicServiceStorage) CreateUser(ctx context.Context, user *models.User)
 		user.PremiumExpiration.Format(time.RFC3339)}
 
 	if err := s.writers[usersFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrCreateUser, err)
+		return fmt.Errorf("%w: %w", storage.ErrCreateUser, err)
 	}
 
 	return nil
@@ -239,7 +239,7 @@ func (s *MusicServiceStorage) AddPlaylist(ctx context.Context, userPlaylist *mod
 		fmt.Sprintf("%t", userPlaylist.IsFavorite), fmt.Sprintf("%d", userPlaylist.AccessLevel)}
 
 	if err := s.writers[usersPlaylistsFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddPlaylist, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddPlaylist, err)
 	}
 
 	return nil
@@ -253,7 +253,7 @@ func (s *MusicServiceStorage) AddTrackToPlaylist(ctx context.Context, track *mod
 		time.Now().Format(time.RFC3339), strconv.Itoa(track.TrackOrder)}
 
 	if err := s.writers[playlistTracksFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddTrackToPlaylist, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddTrackToPlaylist, err)
 	}
 
 	return nil
@@ -266,7 +266,7 @@ func (s *MusicServiceStorage) AddArtistTrack(ctx context.Context, trackID uuid.U
 	record := []string{trackID.String(), artistID.String()}
 
 	if err := s.writers[artistTracksFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddArtistTrack, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddArtistTrack, err)
 	}
 
 	return nil
@@ -279,7 +279,7 @@ func (s *MusicServiceStorage) AddArtistAlbum(ctx context.Context, albumID uuid.U
 	record := []string{albumID.String(), artistID.String()}
 
 	if err := s.writers[artistAlbumFileName].Write(record); err != nil {
-		return fmt.Errorf("%w: %v", storage.ErrAddArtistAlbum, err)
+		return fmt.Errorf("%w: %w", storage.ErrAddArtistAlbum, err)
 	}
 
 	return nil
