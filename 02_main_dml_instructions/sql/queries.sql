@@ -35,4 +35,15 @@ WHERE id IN (
 );
 
 -- 5. Инструкция SELECT, использующая предикат EXISTS с вложенным подзапросом.
+-- 
 
+
+-- 6. Инструкция SELECT, использующая предикат сравнения с квантором
+-- Найти все треки, у количество прослушиваний больше, чем у всех треков жанра "Pop"
+SELECT id, name, stream_count 
+FROM tracks
+WHERE stream_count > ALL (
+    SELECT stream_count 
+    FROM tracks
+    WHERE genre = 'Pop'
+);
