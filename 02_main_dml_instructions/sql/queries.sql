@@ -191,15 +191,22 @@ join playlists p on p.id = pt.playlist_id where p.title = 'Best 100 rock tracks'
 UPDATE users SET name = 'Tompson777' WHERE id = '2ee6dbe9-6777-4443-9789-016c36cc41cd';
 
 -- 19. Инструкция UPDATE со скалярным подзапросом в предложении SET.
--- Продление премиум-подписки на 1 год
-UPDATE users
-SET premium_expiration = (SELECT CURRENT_TIMESTAMP + INTERVAL '1 year')
-WHERE id = 'user-uuid';
+-- Установка рейтинга плейлиста в зависимости от количества его слушателей (сколько людей добавили его себе в коллекцию)
 
+-- !!!
+UPDATE playlists p 
+SET rating = (
+    SELECT count(*) 
+    FROM user_playlists up 
+    WHERE p.id = up.playlist_id
+) where rating = 0;
+
+select * from playlists p where (select count(*) from user_playlists up where p.id = up.playlist_id) = 0;
+
+select * from playlists p;
 
 -- 20. Простая инструкция DELETE.
--- 
-delete 
+--  
 
 
 
