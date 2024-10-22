@@ -116,10 +116,38 @@ select * from top_streamed_tracks;
 drop table if exists top_streamed_tracks;
 
 -- 12. Инструкция SELECT, использующая вложенные коррелированные подзапросы в качестве производных таблиц в предложении FROM
--- хуета какая-то
+-- Самый прослушиваемый трек среди всех в жанре "Pop" и "Rock"
+SELECT genre_table.genre, track_table.name, track_table.stream_count
+FROM (
+    SELECT genre, MAX(stream_count) AS max_streams
+    FROM tracks
+    WHERE genre IN ('Pop', 'Rock') 
+    GROUP BY genre
+) AS genre_table
+JOIN (
+    SELECT t.genre, t.name, t.stream_count
+    FROM tracks t
+    WHERE t.stream_count = (
+        SELECT MAX(t2.stream_count)
+        FROM tracks t2
+        WHERE t2.genre = t.genre
+    )
+) AS track_table
+ON genre_table.genre = track_table.genre AND genre_table.max_streams = track_table.stream_count;
 
 -- 13. Инструкция SELECT, использующая вложенные подзапросы с уровнем вложенности 3
-select p.id, p.title from playlists p where p.id (select )
+-- Получение альбомов исполнителей из Франции
+SELECT id, title
+FROM albums
+WHERE id IN (
+    SELECT album_id
+    FROM albums_by_artists
+    WHERE artist_id IN (
+        SELECT id
+        FROM artists
+        WHERE country = 'France'
+    )
+);
 
 -- 14. Инструкция SELECT, консолидирующая данные с помощью GROUP BY, но без HAVING
 -- Запрос для получения средней продолжительности треков в альбоме
@@ -139,7 +167,7 @@ VALUES (uuid_generate_v4(), 'John Wick', CURRENT_TIMESTAMP, '1970-01-01', FALSE)
 
 -- 17. Многострочная инструкция INSERT, выполняющая вставку в таблицу
 -- результирующего набора данных вложенного подзапроса.
--- Добавление в плейлист "Best 100 rock tracks" 100 самых прослушиваех треков в жанре "Рок"
+-- Добавление в плейлист "Best 100 rock tracks" 100 самых прослушиваемых треков в жанре "Рок"
 
 CREATE OR REPLACE FUNCTION update_last_updated() 
 RETURNS TRIGGER AS $$
@@ -179,12 +207,10 @@ SELECT t.id, pi.id, CURRENT_TIMESTAMP,
        ) + ROW_NUMBER() OVER ()
 FROM top_rock_tracks t, playlist_info pi;
 
-delete from playlist_tracks pt where pt.playDELETE Orders
-WHERE CustomerID IS NULLlist_id = '1308b55c-a84a-4d7d-ba6a-8d69be6cd25e';
+delete from playlist_tracks pt where pt.playlist_id = '5e2a4248-300d-489c-a629-a2711b26cbb5'; -- id of 'Best 100 rock tracks'
 
 select t.id, t.name, t.stream_count, pt.track_order from tracks t join playlist_tracks pt on t.id = pt.track_id
 join playlists p on p.id = pt.playlist_id where p.title = 'Best 100 rock tracks';
-
 
 -- 18. Простая инструкция UPDATE
 -- Обновление никнейма пользователя с id=2ee6dbe9-6777-4443-9789-016c36cc41cd
@@ -193,20 +219,221 @@ UPDATE users SET name = 'Tompson777' WHERE id = '2ee6dbe9-6777-4443-9789-016c36c
 -- 19. Инструкция UPDATE со скалярным подзапросом в предложении SET.
 -- Установка рейтинга плейлиста в зависимости от количества его слушателей (сколько людей добавили его себе в коллекцию)
 
--- !!!
+-- все пользователи, родившиеся с '1960-01-01' по '1970-01-01', добавляют к себе плейлист "Best 100 rock tracks";
+INSERT INTO user_playlists (playlist_id, user_id, is_favorite, access_level)
+SELECT '5e2a4248-300d-489c-a629-a2711b26cbb5', u.id, false, 2 
+FROM users u 
+WHERE u.birth_date BETWEEN '1960-01-01' AND '1970-01-01';
+
+select * from user_playlists up where playlist_id = '5e2a4248-300d-489c-a629-a2711b26cbb5';
+
 UPDATE playlists p 
 SET rating = (
     SELECT count(*) 
     FROM user_playlists up 
     WHERE p.id = up.playlist_id
-) where rating = 0;
+)
+WHERE p.rating = 0;
 
-select * from playlists p where (select count(*) from user_playlists up where p.id = up.playlist_id) = 0;
+UPDATE playlists p set rating = 0 where p.id = '5e2a4248-300d-489c-a629-a2711b26cbb5';
 
-select * from playlists p;
+select * from playlists p where rating = 0;
 
--- 20. Простая инструкция DELETE.
---  
+-- 20. Простая инструкция DELETE
+-- Удаление треков с нулевым количеством прослушиваний
+DELETE FROM tracks WHERE stream_count = 0;
+
+-- 21. Инструкция DELETE с вложенным коррелированным подзапросом в предложении WHERE
+-- Удаление плейлистов, у которых нет треков
+select p.id, p.title from playlists p left join playlist_tracks pt ON p.id = pt.playlist_id where pt.playlist_id is null;
+
+select pt.playlist_id, count(*) from playlist_tracks pt group by pt.playlist_id;
+
+insert into playlists (id, title, description, private, last_updated, rating)
+VALUES (uuid_generate_v4(), '!!!! My Empty !!!!!', 'Empty playlist', FALSE, CURRENT_TIMESTAMP, 0);
+
+DELETE FROM playlists 
+WHERE id not IN (
+	select pt.playlist_id from playlist_tracks pt
+);
+
+-- 22. Инструкция SELECT, использующая простое обобщенное табличное выражение (CTE)
+-- Подсчет среднего количества треков в альбомах
+WITH album_track_count (album_id, track_count) AS (
+    SELECT album_id, COUNT(*) AS track_count
+    FROM tracks
+    GROUP BY album_id
+)
+SELECT AVG(track_count) AS average_tracks_per_album
+FROM album_track_count;
+
+-- 23. Инструкция SELECT, использующая рекурсивное обобщенное табличное выражение.
+-- Добавим пару фитов
+INSERT INTO tracks_by_artists (track_id, artist_id)
+VALUES ('123183f4-f490-4455-af42-7f01590c536f', '89843666-ef33-44b6-b89a-1abf9bddb945');
+
+INSERT INTO tracks_by_artists (track_id, artist_id)
+VALUES ('0e26f1cd-eebc-4b04-b26a-e82427671094', 'c12a849b-5a06-4df8-92f5-168d201bb8fd');
+
+INSERT INTO tracks_by_artists (track_id, artist_id)
+VALUES ('e7295720-bc46-4633-8b91-48362d0730e7', '35a3ebf8-1d61-4d26-b8c8-1281e917299f');
+
+INSERT INTO tracks_by_artists (track_id, artist_id)
+VALUES ('efa63961-78cd-4d21-80c5-70c2dcfcf916', '6b2a1220-f717-4f52-92d8-6087db0a0a3f');
+
+INSERT INTO tracks_by_artists (track_id, artist_id)
+VALUES ('1b27012b-6848-48f5-932f-052084c92baa', '6b2a1220-f717-4f52-92d8-6087db0a0a3f');
+
+-- Поиск кратчайшего "feat-path" - количества фитов между двумя исполнителями
+
+-- Version 1
+--WITH RECURSIVE artist_connections (artist1, artist2, num_feats) AS (
+--    -- Базовый случай: прямой фит между артистами
+--    SELECT 
+--	    ta1.artist_id artist1, 
+--	    ta2.artist_id artist2, 
+--	    1 num_feats
+--	FROM tracks_by_artists ta1 
+--	JOIN tracks_by_artists ta2 
+--	    ON ta1.track_id = ta2.track_id 
+--	    AND ta1.artist_id <> ta2.artist_id
+--
+--    UNION ALL
+--
+--    -- Рекурсивная часть: поиск фитов через других артистов
+--    select artist1, artist2, num_feats from (
+--    	WITH artist_connections2 AS (
+--    		SELECT * FROM artist_connections
+--    	)
+--    	select * from (
+--    		select * from artist_connections2
+--	    	union
+--	    	select ac1.artist2 as artist1, ac2.artist2 as artist2, ac1.num_feats + ac2.num_feats as num_feats 
+--	    		from artist_connections2 ac1 join artist_connections2 ac2 
+--	    		on ac1.artist1 = ac2.artist1 and ac1.artist2 <> ac2.artist2 
+--	    		
+--	    	where (ac1.num_feats + ac2.num_feats < (select ac3.num_feats from artist_connections2 ac3
+--				where ac3.artist1 = ac1.artist2 and ac3.artist2 = ac2.artist2) 
+--	    		or (select count(*) from artist_connections2 ac4 
+--	    			where ac4.artist1 = ac1.artist2 and ac4.artist2 = ac2.artist2) = 0)
+--    	) WHERE EXISTS (
+--		    SELECT 1 
+--		    FROM artist_connections2 ac1 
+--		    JOIN artist_connections2 ac2 
+--		        ON ac1.artist1 = ac2.artist1 AND ac1.artist2 <> ac2.artist2 
+--		    WHERE (ac1.num_feats + ac2.num_feats < 
+--		           (SELECT ac3.num_feats 
+--		            FROM artist_connections2 ac3 
+--		            WHERE ac3.artist1 = ac1.artist2 AND ac3.artist2 = ac2.artist2) 
+--		           OR (SELECT COUNT(*) 
+--		               FROM artist_connections2 ac4 
+--		               WHERE ac4.artist1 = ac1.artist2 AND ac4.artist2 = ac2.artist2) = 0)
+--		)
+--    )
+--)
+--SELECT artist1, artist2, MIN(num_feats) AS shortest_feat_path FROM artist_connections 
+--GROUP BY artist1, artist2 
+--ORDER BY shortest_feat_path;
+
+-- Version 2
+WITH RECURSIVE artist_connections (artist1, artist2, num_feats) AS (
+    -- Базовый случай: прямой фит между артистами
+    SELECT 
+	    ta1.artist_id artist1, 
+	    ta2.artist_id artist2, 
+	    1 num_feats
+	FROM tracks_by_artists ta1 
+	JOIN tracks_by_artists ta2 
+	    ON ta1.track_id = ta2.track_id 
+	    AND ta1.artist_id <> ta2.artist_id
+
+    UNION ALL
+
+    -- Рекурсивная часть: поиск фитов через других артистов
+    select artist1, artist2, num_feats from (
+    	WITH artist_connections2 AS (
+		    SELECT * FROM artist_connections
+		),
+		new_connections AS (
+		    SELECT ac1.artist2 AS artist1, 
+		           ac2.artist2 AS artist2, 
+		           ac1.num_feats + ac2.num_feats AS num_feats 
+		    FROM artist_connections2 ac1 
+		    JOIN artist_connections2 ac2 
+		        ON ac1.artist1 = ac2.artist1 AND ac1.artist2 <> ac2.artist2 
+		    WHERE (ac1.num_feats + ac2.num_feats < 
+		           (SELECT MIN(ac3.num_feats) 
+		            FROM artist_connections2 ac3 
+		            WHERE ac3.artist1 = ac1.artist2 AND ac3.artist2 = ac2.artist2) 
+		           OR (SELECT COUNT(*) 
+		               FROM artist_connections2 ac4 
+		               WHERE ac4.artist1 = ac1.artist2 AND ac4.artist2 = ac2.artist2) = 0)
+		)
+		SELECT artist1, artist2, num_feats 
+		FROM (
+		    SELECT * FROM artist_connections2
+		    UNION ALL
+		    SELECT artist1, artist2, num_feats FROM new_connections
+		) t
+		WHERE EXISTS (SELECT 1 FROM new_connections)
+    )
+)
+SELECT artist1, artist2, MIN(num_feats) AS shortest_feat_path FROM artist_connections 
+GROUP BY artist1, artist2 
+ORDER BY shortest_feat_path;
 
 
+-- 24. Оконные функции. Использование конструкци MIN/MAX/AVG OVER()
+-- Получение минимального, максимального и среднего числа прослушиваний для каждого жанра (для сравнения)
+SELECT genre, name, stream_count,
+    AVG(stream_count) OVER(PARTITION BY genre) AS avg_stream_count,
+    MIN(stream_count) OVER(PARTITION BY genre) AS min_stream_count,
+    MAX(stream_count) OVER(PARTITION BY genre) AS max_stream_count
+FROM tracks;
+
+-- 25. Оконные функции для устранения дублей
+CREATE TEMPORARY TABLE temp_tracks (
+    id UUID,
+    name VARCHAR(100),
+    order_in_album INT,
+    album_id UUID,
+    explicit BOOLEAN,
+    duration INT,
+    genre VARCHAR(50),
+    stream_count BIGINT
+);
+
+-- Создание дублей
+INSERT INTO temp_tracks (id, name, order_in_album, album_id, explicit, duration, genre, stream_count)
+SELECT 
+    id, 
+    name, 
+    order_in_album, 
+    album_id, 
+    explicit, 
+    duration, 
+    genre, 
+    stream_count
+FROM tracks;
+
+-- Проверка, что дубли действительно есть
+SELECT id, count(*) FROM temp_tracks group by id;
+
+SELECT id, ROW_NUMBER() OVER (
+            PARTITION by id, name, album_id, order_in_album, explicit, duration, genre, stream_count 
+            ORDER BY id
+        ) AS row_num
+    FROM temp_tracks;
+
+-- Удаление дублей
+WITH enumerated_tracks AS (
+    SELECT ctid, ROW_NUMBER() OVER (
+               PARTITION by id, name, album_id, order_in_album, explicit, duration, genre, stream_count 
+           ) AS row_num
+    FROM temp_tracks
+)
+DELETE FROM temp_tracks tt
+WHERE ctid IN (
+    SELECT ctid FROM enumerated_tracks et WHERE et.row_num > 1 
+);
 
