@@ -14,7 +14,7 @@ type Track struct {
 	Explicit     bool      `fake:"{bool}"`
 	Duration     int       `fake:"{number:180,300}"` // duration in seconds
 	Genre        string    `fake:"-"`
-	StreamCount  int64     `fake:"{number:1000,5000000}"`
+	StreamCount  int64     `fake:"{number:0,5000000}"`
 }
 
 type PlaylistTrack struct {

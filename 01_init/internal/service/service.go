@@ -215,7 +215,7 @@ func (m *MusicService) generateAlbums(ctx context.Context, artist *models.Artist
 func (m *MusicService) generateTracks(ctx context.Context, album *models.Album, artistID uuid.UUID) error {
 	var (
 		err         error
-		numOfTracks int32
+		numOfTracks int32 = rand.Int32N(maxTracksPerAlbum)
 	)
 
 	for numOfTracks == 0 {
@@ -308,11 +308,8 @@ func (m *MusicService) generateUserWithPlaylists(ctx context.Context) error {
 func (m *MusicService) generatePlaylists(ctx context.Context, user *models.User) error {
 	var (
 		err            error
-		numOfPlaylists int32
+		numOfPlaylists int32 = rand.Int32N(maxPlaylistsPerUser)
 	)
-	for numOfPlaylists == 0 {
-		numOfPlaylists = rand.Int32N(maxPlaylistsPerUser)
-	}
 
 	for i := range numOfPlaylists {
 		// playlist := &models.Playlist{
@@ -367,10 +364,7 @@ func (m *MusicService) generatePlaylists(ctx context.Context, user *models.User)
 }
 
 func (m *MusicService) fillPlaylist(ctx context.Context, playlistID uuid.UUID) error {
-	var numOfTracks int32
-	for numOfTracks == 0 {
-		numOfTracks = rand.Int32N(maxTracksPerPlaylist)
-	}
+	numOfTracks := rand.Int32N(maxTracksPerPlaylist)
 	previosIdx := make(map[int32]struct{})
 
 	for j := range int(numOfTracks) {

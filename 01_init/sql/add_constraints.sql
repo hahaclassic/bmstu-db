@@ -15,6 +15,8 @@ ADD CONSTRAINT unique_album_track_order UNIQUE (album_id, order_in_album);
 
 ALTER TABLE playlists
 ADD CONSTRAINT check_rating CHECK (rating >= 0),
+ALTER COLUMN rating SET NOT NULL,
+ALTER COLUMN rating SET DEFAULT 0,
 ALTER COLUMN last_updated SET DEFAULT CURRENT_TIMESTAMP,
 ADD CONSTRAINT check_last_updated CHECK (last_updated <= CURRENT_TIMESTAMP);
 
@@ -38,6 +40,7 @@ ADD CONSTRAINT fk_user_playlist_playlist FOREIGN KEY (playlist_id) REFERENCES pl
 ADD CONSTRAINT fk_user_playlist_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 ALTER COLUMN playlist_id SET NOT NULL,
 ALTER COLUMN user_id SET NOT NULL,
+ADD CONSTRAINT unique_user_playlist UNIQUE (user_id, playlist_id),
 ADD CONSTRAINT check_access_level CHECK (access_level >= 0);
 
 ALTER TABLE tracks_by_artists
