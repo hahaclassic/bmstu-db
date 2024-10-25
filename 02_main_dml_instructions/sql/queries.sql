@@ -169,22 +169,6 @@ VALUES (uuid_generate_v4(), 'John Wick', CURRENT_TIMESTAMP, '1970-01-01', FALSE)
 -- результирующего набора данных вложенного подзапроса.
 -- Добавление в плейлист "Best 100 rock tracks" 100 самых прослушиваемых треков в жанре "Рок"
 
-CREATE OR REPLACE FUNCTION update_last_updated() 
-RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE playlists
-    SET last_updated = CURRENT_TIMESTAMP
-    WHERE id = NEW.playlist_id;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql; 
-
-CREATE TRIGGER update_playlist_timestamp
-AFTER INSERT OR UPDATE ON playlist_tracks
-FOR EACH ROW
-EXECUTE FUNCTION update_last_updated();
-
-
 INSERT INTO playlists (id, title, description, private, last_updated, rating)
 VALUES (uuid_generate_v4(), 'Best 100 rock tracks', 'Top 100 rock tracks based on stream count', FALSE, CURRENT_TIMESTAMP, 0);
 
@@ -207,7 +191,7 @@ SELECT t.id, pi.id, CURRENT_TIMESTAMP,
        ) + ROW_NUMBER() OVER ()
 FROM top_rock_tracks t, playlist_info pi;
 
-delete from playlist_tracks pt where pt.playlist_id = '5e2a4248-300d-489c-a629-a2711b26cbb5'; -- id of 'Best 100 rock tracks'
+delete from playlist_tracks pt where pt.playlist_id = '2f9d4da0-a19e-4ca0-b5f4-dba4061c8e33'; -- id of 'Best 100 rock tracks'
 
 select t.id, t.name, t.stream_count, pt.track_order from tracks t join playlist_tracks pt on t.id = pt.track_id
 join playlists p on p.id = pt.playlist_id where p.title = 'Best 100 rock tracks';
