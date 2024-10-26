@@ -23,11 +23,11 @@ AS $$
     SELECT a.id, a.title, a.release_date
     FROM albums a
     JOIN albums_by_artists aa ON a.id = aa.album_id
-    WHERE aa.artist_id = artist_id
+    WHERE aa.artist_id = get_albums_by_artist.artist_id
     ORDER BY a.release_date DESC;
 $$;
 
-select album_id, title, release_date from get_albums_by_artist('e42cff8f-9c2f-4b2c-8308-e110c83e7c6d');
+select album_id, title, release_date from get_albums_by_artist('a2dfddfb-5290-4847-b5c5-553beb767c4e');
 
 
 -- 3. Многооператорная табличная функция
@@ -94,10 +94,10 @@ JOIN tracks t ON ta.track_id = t.id;
 $$;
 
 INSERT INTO tracks_by_artists (track_id, artist_id)
-VALUES ('aed38846-d6b4-45fe-90d6-9a9b1e98907c', 'c12a849b-5a06-4df8-92f5-168d201bb8fd');
+VALUES ('7ca63761-d6bf-436c-8fef-409218f664f8', '2346bafb-7e0f-45af-8005-0f2fbdf6a545');
 
-select track_id, track_name from find_tracks_by_collaborators('e42cff8f-9c2f-4b2c-8308-e110c83e7c6d') where track_id not in 
-(select tba.track_id from tracks_by_artists tba where tba.artist_id = 'e42cff8f-9c2f-4b2c-8308-e110c83e7c6d');
+select track_id, track_name from find_tracks_by_collaborators('e5df1125-a73a-4eae-b4bf-37b15db47cee') where track_id not in 
+(select tba.track_id from tracks_by_artists tba where tba.artist_id = 'e5df1125-a73a-4eae-b4bf-37b15db47cee');
 
 -------------------------------------------------------
 -- PROCEDURES
@@ -149,9 +149,9 @@ END;
 $$;
 
 INSERT INTO tracks_by_artists (track_id, artist_id)
-VALUES ('aed38846-d6b4-45fe-90d6-9a9b1e98907c', 'c12a849b-5a06-4df8-92f5-168d201bb8fd');
+VALUES ('5800504c-ca27-4d58-b865-7991dec8ad32', 'fa525e83-9f5d-433c-9adc-f99eb68187c1');
 
-CALL delete_artist_and_collaborators('39e9ce7d-1058-41e0-a27d-386bbd84f49a', 1);
+CALL delete_artist_and_collaborators('74e3ad27-ff47-4bdd-9498-053fabbb48a5', 1);
 
 
 -- 7. Хранимая процедура с курсором
@@ -227,9 +227,11 @@ $$ LANGUAGE plpgsql;
 
 -- Создание триггера для таблицы playlist_tracks
 CREATE TRIGGER trigger_update_playlist_timestamp
-AFTER INSERT OR UPDATE ON playlist_tracks
+AFTER INSERT OR UPDATE or Delete ON playlist_tracks
 FOR EACH ROW
 EXECUTE FUNCTION update_playlist_timestamp();
+
+drop trigger trigger_update_playlist_timestamp on playlist_tracks;
 
 
 -- 10. Trigger INSTEAD OF
@@ -256,6 +258,39 @@ EXECUTE FUNCTION prevent_artist_deletion();
 CREATE VIEW artists_view AS
 SELECT * FROM artists;
 
-delete from artists_view where id = '1718e0ef-29da-400e-b242-1954539a7c0c';
+delete from artists_view where id = 'd510e4c1-8a8f-4db5-a7cc-280ace66dbaa';
 
-delete from albums_by_artists where artist_id = '1718e0ef-29da-400e-b242-1954539a7c0c';
+-- DEFENCE 
+create or replace procedure track_count_by_country(year_param int)
+language plpgsql
+as $$
+declare
+    country_name text;
+    track_count int;
+begin
+ 	raise notice 'COUNTRIES';
+    for country_name, track_count in
+        select 
+            ar.country as country,
+            count(t.id) as track_count
+        from 
+            tracks t
+        join 
+            tracks_by_artists ta on t.id = ta.track_id
+        join 
+            artists ar on ta.artist_id = ar.id
+        where 
+            extract(year from (select al.release_date from albums al where al.id = t.album_id)) = year_param
+        group by 
+            ar.country
+        order by 
+            track_count desc
+    loop
+        raise notice 'country: %, track count: %', country_name, track_count;
+   	end loop;
+end;
+$$;
+
+call track_count_by_country(2000);
+
+

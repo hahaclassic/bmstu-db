@@ -85,10 +85,9 @@ FROM artists;
 -- 9. Инструкция SELECT, использующая простое выражение CASE
 -- Получение альбомов с делением по дате выпуска на "этот год", "прошлый", "за последнее десятилетие" и "ранее"
 SELECT title, release_date,
-CASE
-    WHEN EXTRACT(YEAR FROM release_date) = EXTRACT(YEAR FROM CURRENT_DATE) THEN 'This Year'
-    WHEN EXTRACT(YEAR FROM release_date) = EXTRACT(YEAR FROM CURRENT_DATE) - 1 THEN 'Last Year'
-    when EXTRACT(year from release_date) >= EXTRACT(year from CURRENT_DATE) - 10 then 'Last Decade'
+case EXTRACT(YEAR FROM release_date)
+    WHEN EXTRACT(YEAR FROM CURRENT_DATE) THEN 'This Year'
+    WHEN EXTRACT(YEAR FROM CURRENT_DATE) - 1 THEN 'Last Year'
     ELSE 'Earlier'
 END AS release_status
 FROM albums;
@@ -191,10 +190,10 @@ SELECT t.id, pi.id, CURRENT_TIMESTAMP,
        ) + ROW_NUMBER() OVER ()
 FROM top_rock_tracks t, playlist_info pi;
 
-delete from playlist_tracks pt where pt.playlist_id = '2f9d4da0-a19e-4ca0-b5f4-dba4061c8e33'; -- id of 'Best 100 rock tracks'
+delete from playlist_tracks pt where pt.playlist_id = 'dbd88664-8fa1-45d7-89b1-363da25054d4'; -- id of 'Best 100 rock tracks'
 
 select t.id, t.name, t.stream_count, pt.track_order from tracks t join playlist_tracks pt on t.id = pt.track_id
-join playlists p on p.id = pt.playlist_id where p.title = 'Best 100 rock tracks';
+join playlists p on p.id = pt.playlist_id where p.title = 'Best 100 rock tracks' order by pt.track_order;
 
 -- 18. Простая инструкция UPDATE
 -- Обновление никнейма пользователя с id=2ee6dbe9-6777-4443-9789-016c36cc41cd
@@ -205,11 +204,11 @@ UPDATE users SET name = 'Tompson777' WHERE id = '2ee6dbe9-6777-4443-9789-016c36c
 
 -- все пользователи, родившиеся с '1960-01-01' по '1970-01-01', добавляют к себе плейлист "Best 100 rock tracks";
 INSERT INTO user_playlists (playlist_id, user_id, is_favorite, access_level)
-SELECT '5e2a4248-300d-489c-a629-a2711b26cbb5', u.id, false, 2 
+SELECT 'dbd88664-8fa1-45d7-89b1-363da25054d4', u.id, false, 2 
 FROM users u 
 WHERE u.birth_date BETWEEN '1960-01-01' AND '1970-01-01';
 
-select * from user_playlists up where playlist_id = '5e2a4248-300d-489c-a629-a2711b26cbb5';
+select * from user_playlists up where playlist_id = 'dbd88664-8fa1-45d7-89b1-363da25054d4';
 
 UPDATE playlists p 
 SET rating = (
@@ -219,7 +218,7 @@ SET rating = (
 )
 WHERE p.rating = 0;
 
-UPDATE playlists p set rating = 0 where p.id = '5e2a4248-300d-489c-a629-a2711b26cbb5';
+UPDATE playlists p set rating = 0 where p.id = 'dbd88664-8fa1-45d7-89b1-363da25054d4';
 
 select * from playlists p where rating = 0;
 
@@ -254,10 +253,14 @@ FROM album_track_count;
 -- 23. Инструкция SELECT, использующая рекурсивное обобщенное табличное выражение.
 -- Добавим пару фитов
 INSERT INTO tracks_by_artists (track_id, artist_id)
-VALUES ('123183f4-f490-4455-af42-7f01590c536f', '89843666-ef33-44b6-b89a-1abf9bddb945');
+VALUES ('3531f9f1-8901-4e6f-bf52-e69bbb07a9f4', 'e5df1125-a73a-4eae-b4bf-37b15db47cee');
 
 INSERT INTO tracks_by_artists (track_id, artist_id)
-VALUES ('0e26f1cd-eebc-4b04-b26a-e82427671094', 'c12a849b-5a06-4df8-92f5-168d201bb8fd');
+VALUES ('7ca63761-d6bf-436c-8fef-409218f664f8', '2346bafb-7e0f-45af-8005-0f2fbdf6a545');
+
+select id, name from artists a where id in ('e5df1125-a73a-4eae-b4bf-37b15db47cee', 
+	'2346bafb-7e0f-45af-8005-0f2fbdf6a545', 'a2dfddfb-5290-4847-b5c5-553beb767c4e');
+	
 
 INSERT INTO tracks_by_artists (track_id, artist_id)
 VALUES ('e7295720-bc46-4633-8b91-48362d0730e7', '35a3ebf8-1d61-4d26-b8c8-1281e917299f');
@@ -420,4 +423,61 @@ DELETE FROM temp_tracks tt
 WHERE ctid IN (
     SELECT ctid FROM enumerated_tracks et WHERE et.row_num > 1 
 );
+
+
+-- DEFENCE 
+-- Для каждого несовершеннолетноего пользователя, зарегистрированного за последний год, вывести
+-- 1. кол-во плейлистов
+-- 2. самый часто встречаемый жанр в плейлисте
+-- 3. страна самого часто встречаемого артиста в данном жанре
+   
+WITH user_genre AS (
+    SELECT 
+        u.id AS user_id,
+        u.name AS username,
+        AGE(u.birth_date) AS age,
+        COUNT(DISTINCT up.playlist_id) AS num_of_playlists,
+        mode() WITHIN GROUP (ORDER BY t.genre) AS most_frequent_genre
+    FROM 
+        users u
+    JOIN 
+        user_playlists up ON u.id = up.user_id
+    JOIN 
+        playlist_tracks pt ON up.playlist_id = pt.playlist_id
+    JOIN 
+        tracks t ON pt.track_id = t.id
+    WHERE 
+        u.birth_date > CURRENT_DATE - INTERVAL '18 years' 
+        AND u.registration_date > CURRENT_DATE - INTERVAL '1 year'
+    GROUP BY 
+        u.id, u.name
+)
+SELECT 
+    ug.user_id,
+    ug.username,
+    ug.age,
+    ug.num_of_playlists,
+    ug.most_frequent_genre,
+    mode() WITHIN GROUP (ORDER BY a.name) AS most_frequent_artist,
+    mode() WITHIN GROUP (ORDER BY a.country) AS top_artist_country
+FROM 
+    user_genre ug
+JOIN 
+    user_playlists up ON ug.user_id = up.user_id
+JOIN 
+    playlist_tracks pt ON up.playlist_id = pt.playlist_id
+JOIN 
+    tracks t ON pt.track_id = t.id AND t.genre = ug.most_frequent_genre
+JOIN 
+    tracks_by_artists ta ON t.id = ta.track_id
+JOIN 
+    artists a ON ta.artist_id = a.id
+GROUP BY 
+    ug.user_id, ug.username, ug.age, ug.num_of_playlists, ug.most_frequent_genre;
+
+   
+
+
+
+
 
