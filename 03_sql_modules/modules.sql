@@ -103,7 +103,7 @@ select track_id, track_name from find_tracks_by_collaborators('e42cff8f-9c2f-4b2
 -- PROCEDURES
 -------------------------------------------------------
 
--- 1. Хранимая процедура без параметров
+-- 5. Хранимая процедура без параметров
 -- Процедура для выдачи премиума всем пользователям от 65 лет.
 CREATE OR REPLACE PROCEDURE free_premium_to_pensioners()
 LANGUAGE plpgsql
@@ -121,43 +121,99 @@ WHERE premium = false and EXTRACT(YEAR FROM AGE(birth_date)) >= 65;
 
 call free_premium_to_pensioners();
 
--- 2. 
 
--- 3. Хранимая процедура с курсором
+-- 6. Рекурсивная хранимая процедура 
+-- Удаление всех артистов, сотрудничающих с заданным артистом,
+CREATE OR REPLACE PROCEDURE delete_artist_and_collaborators(artist_uuid UUID, recursion_level INT DEFAULT 1)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    collaborator UUID;
+BEGIN
+    IF recursion_level > 5 THEN
+        RAISE NOTICE 'Max recursion level reached for artist: %', artist_uuid;
+        RETURN;
+    END IF;
+
+    FOR collaborator IN
+        SELECT ta2.artist_id
+        FROM tracks_by_artists ta1
+        JOIN tracks_by_artists ta2 ON ta1.track_id = ta2.track_id
+        WHERE ta1.artist_id = artist_uuid AND ta2.artist_id <> artist_uuid
+    LOOP
+        call delete_artist_and_collaborators(collaborator, recursion_level + 1);
+    END LOOP;
+
+    DELETE FROM artists WHERE id = artist_uuid;
+END;
+$$;
+
+INSERT INTO tracks_by_artists (track_id, artist_id)
+VALUES ('aed38846-d6b4-45fe-90d6-9a9b1e98907c', 'c12a849b-5a06-4df8-92f5-168d201bb8fd');
+
+CALL delete_artist_and_collaborators('39e9ce7d-1058-41e0-a27d-386bbd84f49a', 1);
+
+
+-- 7. Хранимая процедура с курсором
 -- Деактивация истекших премиумов
-CREATE OR REPLACE FUNCTION deactivate_expired_premium_users()
-RETURNS VOID
+CREATE OR REPLACE PROCEDURE deactivate_expired_premium_users()
 LANGUAGE plpgsql
 AS $$
 DECLARE
     user_cursor CURSOR FOR 
-        SELECT id 
+        SELECT id, premium 
         FROM users 
-        WHERE premium = TRUE AND premium_expiration < NOW();
-    
-    user_record RECORD;
+        WHERE premium = TRUE AND premium_expiration < NOW()
+        FOR UPDATE;
 BEGIN
-    OPEN user_cursor;
-
-    LOOP
-        FETCH user_cursor INTO user_record;
-        EXIT WHEN NOT FOUND;
-
-        -- Обновляем статус премиум пользователя
+    FOR user_record IN user_cursor LOOP
         UPDATE users 
         SET premium = FALSE 
-        WHERE id = user_record.id;
+        WHERE CURRENT OF user_cursor; 
     END LOOP;
-
-    CLOSE user_cursor;
 END;
 $$;
+
+SELECT id, premium, premium_expiration FROM users WHERE premium = TRUE AND premium_expiration < NOW();
+
+call deactivate_expired_premium_users();
+
+
+-- 8. Хранимая процедура доступа к метаданным
+-- Вывод таблиц, атрибутов и их типов данных
+CREATE OR REPLACE PROCEDURE get_table_metadata()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    table_record RECORD;
+    column_record RECORD;
+BEGIN
+    FOR table_record IN 
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+    LOOP
+        RAISE NOTICE 'Table: %', table_record.table_name;
+
+        FOR column_record IN 
+            SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_schema = 'public' AND table_name = table_record.table_name
+        LOOP
+            RAISE NOTICE '	| % | % |', column_record.column_name, column_record.data_type;
+        END LOOP;
+    END LOOP;
+END;
+$$;
+
+call get_table_metadata();
 
 
 -------------------------------------------------------
 -- DML TRIGGERS
 -------------------------------------------------------
 
+-- 9. Trigger AFTER
 -- Обновление даты последнего редактирования плейлиста
 CREATE OR REPLACE FUNCTION update_playlist_timestamp() 
 RETURNS TRIGGER AS $$
@@ -176,6 +232,7 @@ FOR EACH ROW
 EXECUTE FUNCTION update_playlist_timestamp();
 
 
+-- 10. Trigger INSTEAD OF
 -- Триггер, который предотвращает удаление артистов, у которых есть альбомы
 CREATE OR REPLACE FUNCTION prevent_artist_deletion()
 RETURNS TRIGGER
