@@ -17,17 +17,17 @@ select a.id, a.name, count_artist_tracks(a.id) as number_of_tracks from artists 
 -- 2. Подставляемая табличная функция
 -- Получение альбомов исполнителя
 create or replace function get_albums_by_artist(artist_id UUID)
-RETURNS TABLE (album_id UUID, title VARCHAR, release_date DATE)
+RETURNS TABLE (album_id UUID, title VARCHAR, release_date DATE, label VARCHAR, genre VARCHAR)
 LANGUAGE sql
 AS $$
-    SELECT a.id, a.title, a.release_date
+    SELECT a.id, a.title, a.release_date, a.label, a.genre
     FROM albums a
     JOIN albums_by_artists aa ON a.id = aa.album_id
     WHERE aa.artist_id = get_albums_by_artist.artist_id
     ORDER BY a.release_date DESC;
 $$;
 
-select album_id, title, release_date from get_albums_by_artist('a2dfddfb-5290-4847-b5c5-553beb767c4e');
+select * from get_albums_by_artist('5e8e4b37-6263-44f3-9a6d-d61262e7251b');
 
 
 -- 3. Многооператорная табличная функция
