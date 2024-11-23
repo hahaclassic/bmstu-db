@@ -1,0 +1,15 @@
+services:
+  music-service-db:
+    image: postgres:16.0
+    container_name: food-db
+    env_file:
+      - $PWD/.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./data/:/data/
+    ports:
+      - "5432:5432"
+
+volumes:
+  db-data:
+    name: food-db-data
