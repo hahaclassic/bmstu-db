@@ -14,8 +14,8 @@ func (c *Controller) ExportUsersToJSON(ctx context.Context) {
 	var fileName string
 
 	fmt.Print("Enter the file name for export (default: ./data/users.json): ")
-	fmt.Scanln(&fileName)
-	if fileName == "" {
+	_, err := fmt.Scanln(&fileName)
+	if err != nil || fileName == "" {
 		fileName = "./data/users.json"
 	}
 
@@ -38,8 +38,8 @@ func (c *Controller) ImportUsersFromJSON(ctx context.Context) {
 	var fileName string
 
 	fmt.Print("Enter the file name for import (default: ./data/users.json): ")
-	fmt.Scanln(&fileName)
-	if fileName == "" {
+	_, err := fmt.Scanln(&fileName)
+	if err != nil || fileName == "" {
 		fileName = "./data/users.json"
 	}
 
@@ -54,8 +54,6 @@ func (c *Controller) ImportUsersFromJSON(ctx context.Context) {
 		slog.Error("failed to parse JSON", "err", err)
 		return
 	}
-
-	fmt.Println(users[0])
 
 	err = c.storage.ImportUsers(ctx, users)
 	if err != nil {

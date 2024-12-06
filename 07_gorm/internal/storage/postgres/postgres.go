@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/hahaclassic/databases/07_gorm/config"
@@ -166,7 +167,25 @@ func (s *Storage) ExportUsersToJSON(ctx context.Context) ([]byte, error) {
 }
 
 func (s *Storage) ImportUsers(ctx context.Context, users []*models.User) error {
-	if err := s.db.WithContext(ctx).Create(&users).Error; err != nil {
+	defaultUsers := make([]struct {
+		ID                uuid.UUID `json:"id"`
+		Name              string    `json:"name"`
+		RegistrationDate  time.Time `json:"registration_date"`
+		BirthDate         time.Time `json:"birth_date"`
+		Premium           bool      `json:"premium"`
+		PremiumExpiration time.Time `json:"premium_expiration"`
+	}, len(users))
+
+	for i := range users {
+		defaultUsers[i].ID = users[i].ID
+		defaultUsers[i].Name = users[i].Name
+		defaultUsers[i].RegistrationDate = users[i].RegistrationDate
+		defaultUsers[i].BirthDate = time.Time(users[i].BirthDate)
+		defaultUsers[i].Premium = users[i].Premium
+		defaultUsers[i].PremiumExpiration = users[i].PremiumExpiration
+	}
+
+	if err := s.db.WithContext(ctx).Table("temp_users").Create(&defaultUsers).Error; err != nil {
 		return fmt.Errorf("failed to insert users into the database: %w", err)
 	}
 

@@ -328,20 +328,20 @@ func (Controller) setPremium() (bool, time.Time, error) {
 	return premium, premiumExp, nil
 }
 
-func (Controller) userBirthDay() (time.Time, error) {
+func (Controller) userBirthDay() (models.JsonBirthDate, error) {
 	fmt.Print("Enter birth date (YYYY-MM-DD): ")
 	var birthDateStr string
 	_, err := fmt.Scan(&birthDateStr)
 	if err != nil {
-		return time.Now(), err
+		return models.JsonBirthDate(time.Now()), err
 	}
 
 	birthDate, err := time.Parse("2006-01-02", birthDateStr)
 	if err != nil {
-		return time.Now(), err
+		return models.JsonBirthDate(time.Now()), err
 	}
 
-	return birthDate, nil
+	return models.JsonBirthDate(birthDate), nil
 }
 
 // Обновление имени пользователя
@@ -352,13 +352,13 @@ func (c *Controller) UpdateUserName(ctx context.Context) {
 	fmt.Print("Enter user ID: ")
 	_, err := fmt.Scan(&userIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "Failed to read user ID", "err", err)
+		slog.Error("Failed to read user ID", "err", err)
 		return
 	}
 
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "Invalid UUID format", "err", err)
+		slog.Error("Invalid UUID format", "err", err)
 		fmt.Println("Please enter a valid UUID.")
 		return
 	}
@@ -366,7 +366,7 @@ func (c *Controller) UpdateUserName(ctx context.Context) {
 	fmt.Print("Enter new user name: ")
 	_, err = fmt.Scan(&newName)
 	if err != nil {
-		slog.Error("[ERR]", "Failed to read new name", "err", err)
+		slog.Error("Failed to read new name", "err", err)
 		return
 	}
 
@@ -385,13 +385,13 @@ func (c *Controller) DeleteUser(ctx context.Context) {
 	fmt.Print("Enter user ID to delete: ")
 	_, err := fmt.Scan(&userIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "Failed to read user ID", "err", err)
+		slog.Error("Failed to read user ID", "err", err)
 		return
 	}
 
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "Invalid UUID format", "err", err)
+		slog.Error("Invalid UUID format", "err", err)
 		fmt.Println("Please enter a valid UUID.")
 		return
 	}
@@ -411,13 +411,13 @@ func (c *Controller) AlbumsByArtist(ctx context.Context) {
 	fmt.Print("Enter artist ID: ")
 	_, err := fmt.Scan(&artistIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "Failed to read artist ID", "err", err)
+		slog.Error("Failed to read artist ID", "err", err)
 		return
 	}
 
 	artistID, err := uuid.Parse(artistIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "Invalid UUID format", "err", err)
+		slog.Error("Invalid UUID format", "err", err)
 		fmt.Println("Please enter a valid UUID.")
 		return
 	}

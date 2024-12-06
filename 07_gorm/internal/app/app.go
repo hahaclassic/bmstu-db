@@ -15,6 +15,7 @@ func Start(cfg *config.Config) {
 	db, err := postgres.New(ctx, &cfg.Postres)
 	if err != nil {
 		slog.Error("POSTGRES", "err", err)
+		return
 	}
 
 	controller.NewController(db).Start(ctx)
