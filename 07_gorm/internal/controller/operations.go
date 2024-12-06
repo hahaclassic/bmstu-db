@@ -9,11 +9,23 @@ type Operation int
 
 const (
 	operationsStart Operation = iota
+
 	BestExplicitTracks
 	CountTracksByGenre
 	AlbumsWithMaxTracks
 	ArtistsWithReleasedAlbumYear
 	UsersOlderThan
+
+	TracksByGenre
+	AlbumsWithTrackCounts
+	AddUser
+	UpdateUserName
+	DeleteUser
+	AlbumsByArtist
+
+	ExportUsersToJSON
+	ImportUsersFromJSON
+
 	operationsEnd
 	Exit Operation = 0
 )
@@ -30,6 +42,22 @@ func (op Operation) String() string {
 		return "ArtistsWithReleasedAlbumYear"
 	case UsersOlderThan:
 		return "UsersOlderThan"
+	case TracksByGenre:
+		return "TracksByGenre"
+	case AlbumsWithTrackCounts:
+		return "AlbumsWithTrackCounts"
+	case AddUser:
+		return "AddUser"
+	case UpdateUserName:
+		return "UpdateUserName"
+	case DeleteUser:
+		return "DeleteUser"
+	case AlbumsByArtist:
+		return "AlbumsByArtist"
+	case ExportUsersToJSON:
+		return "ExportUsersToJSON"
+	case ImportUsersFromJSON:
+		return "ImportUsersFromJSON"
 	case Exit:
 		return "Exit"
 	default:

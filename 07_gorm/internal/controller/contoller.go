@@ -16,22 +16,30 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 )
 
-type Contoller struct {
+type Controller struct {
 	storage storage.Storage
 }
 
-func NewController(storage storage.Storage) *Contoller {
-	return &Contoller{storage: storage}
+func NewController(storage storage.Storage) *Controller {
+	return &Controller{storage: storage}
 }
 
 // Start обрабатывает выбор операции и выполняет соответствующий метод
-func (c *Contoller) Start(ctx context.Context) {
+func (c *Controller) Start(ctx context.Context) {
 	methods := map[Operation]func(context.Context){
 		BestExplicitTracks:           c.BestExplicitTracks,
 		CountTracksByGenre:           c.CountTracksByGenre,
 		AlbumsWithMaxTracks:          c.AlbumsWithMaxTracks,
 		ArtistsWithReleasedAlbumYear: c.ArtistsWithReleasedAlbumYear,
 		UsersOlderThan:               c.UsersOlderThan,
+		TracksByGenre:                c.TracksByGenre,
+		AlbumsWithTrackCounts:        c.AlbumsWithTrackCounts,
+		AddUser:                      c.AddUser,
+		UpdateUserName:               c.UpdateUserName,
+		DeleteUser:                   c.DeleteUser,
+		AlbumsByArtist:               c.AlbumsByArtist,
+		ExportUsersToJSON:            c.ExportUsersToJSON,
+		ImportUsersFromJSON:          c.ImportUsersFromJSON,
 	}
 
 	for {
@@ -57,7 +65,7 @@ func (c *Contoller) Start(ctx context.Context) {
 	}
 }
 
-func (c *Contoller) BestExplicitTracks(ctx context.Context) {
+func (c *Controller) BestExplicitTracks(ctx context.Context) {
 	var limit int
 	fmt.Print("Enter limit for best tracks: ")
 	_, err := fmt.Scan(&limit)
@@ -86,7 +94,7 @@ func (c *Contoller) BestExplicitTracks(ctx context.Context) {
 	tableoutput.PrintTable(table.StyleColoredDark, headers, rows)
 }
 
-func (c *Contoller) CountTracksByGenre(ctx context.Context) {
+func (c *Controller) CountTracksByGenre(ctx context.Context) {
 	genres, err := c.storage.CountTracksByGenre(ctx)
 	if err != nil {
 		log.Printf("Error getting best tracks: %v", err)
@@ -106,7 +114,7 @@ func (c *Contoller) CountTracksByGenre(ctx context.Context) {
 	tableoutput.PrintTable(table.StyleColoredDark, headers, rows)
 }
 
-func (c *Contoller) AlbumsWithMaxTracks(ctx context.Context) {
+func (c *Controller) AlbumsWithMaxTracks(ctx context.Context) {
 	var minNumOfTracks int
 	fmt.Print("Enter max number for tracks: ")
 	_, err := fmt.Scan(&minNumOfTracks)
@@ -135,7 +143,7 @@ func (c *Contoller) AlbumsWithMaxTracks(ctx context.Context) {
 	tableoutput.PrintTable(table.StyleColoredDark, headers, rows)
 }
 
-func (c *Contoller) ArtistsWithReleasedAlbumYear(ctx context.Context) {
+func (c *Controller) ArtistsWithReleasedAlbumYear(ctx context.Context) {
 	var year int
 	fmt.Print("Enter the release year: ")
 	_, err := fmt.Scan(&year)
@@ -164,7 +172,7 @@ func (c *Contoller) ArtistsWithReleasedAlbumYear(ctx context.Context) {
 	tableoutput.PrintTable(table.StyleColoredDark, headers, rows)
 }
 
-func (c *Contoller) UsersOlderThan(ctx context.Context) {
+func (c *Controller) UsersOlderThan(ctx context.Context) {
 	var age int
 	fmt.Print("Enter the minimum age: ")
 	_, err := fmt.Scan(&age)
@@ -195,7 +203,7 @@ func (c *Contoller) UsersOlderThan(ctx context.Context) {
 }
 
 // Получение всех треков одного жанра
-func (c *Contoller) GetTracksByGenre(ctx context.Context) {
+func (c *Controller) TracksByGenre(ctx context.Context) {
 	var genre string
 	fmt.Print("Enter genre: ")
 	_, err := fmt.Scan(&genre)
@@ -204,7 +212,7 @@ func (c *Contoller) GetTracksByGenre(ctx context.Context) {
 		return
 	}
 
-	tracks, err := c.storage.GetTracksByGenre(ctx, genre)
+	tracks, err := c.storage.TracksByGenre(ctx, genre)
 	if err != nil {
 		log.Printf("Error getting tracks by genre: %v", err)
 		return
@@ -225,8 +233,16 @@ func (c *Contoller) GetTracksByGenre(ctx context.Context) {
 }
 
 // Многотабличный запрос
-func (c *Contoller) GetAlbumsWithTrackCounts(ctx context.Context) {
-	albums, err := c.storage.GetAlbumsWithTrackCounts(ctx)
+func (c *Controller) AlbumsWithTrackCounts(ctx context.Context) {
+	var genre string
+	fmt.Print("Enter genre: ")
+	_, err := fmt.Scan(&genre)
+	if err != nil {
+		slog.Error("[ERR]", "err", err)
+		return
+	}
+
+	albums, err := c.storage.AlbumsWithTrackCounts(ctx, genre)
 	if err != nil {
 		log.Printf("Error getting albums with track counts: %v", err)
 		return
@@ -247,7 +263,7 @@ func (c *Contoller) GetAlbumsWithTrackCounts(ctx context.Context) {
 }
 
 // Добавление пользователя
-func (c *Contoller) AddUser(ctx context.Context) {
+func (c *Controller) AddUser(ctx context.Context) {
 	user := models.User{}
 
 	fmt.Print("Enter user name: ")
@@ -257,51 +273,62 @@ func (c *Contoller) AddUser(ctx context.Context) {
 		return
 	}
 
-	birthDay, err := c.getUserBirthDay()
-	if err != nil {
-		slog.Error("[ERR]", "err", err)
-		return
-	}
-	user.BirthDate = birthDay
-
-	fmt.Print("Is the user premium? (true/false): ")
-	_, err = fmt.Scan(&user.Premium)
+	user.BirthDate, err = c.userBirthDay()
 	if err != nil {
 		slog.Error("[ERR]", "err", err)
 		return
 	}
 
-	user.RegistrationDate = time.Now()
-
-	if user.Premium {
-		fmt.Print("Enter premium expiration date (YYYY-MM-DD): ")
-		var premiumExpiration string
-		_, err = fmt.Scan(&premiumExpiration)
-		if err != nil {
-			slog.Error("[ERR]", "err", err)
-			return
-		}
-		user.PremiumExpiration, err = time.Parse("2006-01-02", premiumExpiration)
-		if err != nil {
-			log.Printf("Invalid premium expiration date format: %v", err)
-			return
-		}
-	} else {
-		user.PremiumExpiration = time.Time{} // Нулевая дата, если нет подписки
+	user.Premium, user.PremiumExpiration, err = c.setPremium()
+	if err != nil {
+		slog.Error("[ERR]", "err", err)
+		return
 	}
 
 	user.ID = uuid.New()
 	user.RegistrationDate = time.Now()
 
 	if err := c.storage.AddUser(ctx, &user); err != nil {
-		log.Printf("Error adding user: %v", err)
+		slog.Error("[ERR]", "err", err)
 		return
 	}
 
 	fmt.Println("User added successfully.")
 }
 
-func (Contoller) getUserBirthDay() (time.Time, error) {
+func (Controller) setPremium() (bool, time.Time, error) {
+	var (
+		premium    bool
+		premiumExp time.Time
+	)
+	fmt.Print("Is the user premium? (true/false): ")
+	_, err := fmt.Scan(&premium)
+	if err != nil {
+		slog.Error("[ERR]", "err", err)
+		return false, time.Time{}, err
+	}
+
+	if premium {
+		fmt.Print("Enter premium expiration date (YYYY-MM-DD): ")
+		var premiumExpiration string
+		_, err = fmt.Scan(&premiumExpiration)
+		if err != nil {
+			slog.Error("[ERR]", "err", err)
+			return false, time.Time{}, err
+		}
+		premiumExp, err = time.Parse("2006-01-02", premiumExpiration)
+		if err != nil {
+			log.Printf("Invalid premium expiration date format: %v", err)
+			return false, time.Time{}, err
+		}
+	} else {
+		premiumExp = time.Time{}
+	}
+
+	return premium, premiumExp, nil
+}
+
+func (Controller) userBirthDay() (time.Time, error) {
 	fmt.Print("Enter birth date (YYYY-MM-DD): ")
 	var birthDateStr string
 	_, err := fmt.Scan(&birthDateStr)
@@ -317,50 +344,29 @@ func (Contoller) getUserBirthDay() (time.Time, error) {
 	return birthDate, nil
 }
 
-// func (Contoller) setUser() (bool, time.Time) {
-// 	ok := false
-
-// 	fmt.Print("Is the user premium? (true/false): ")
-// 	_, err = fmt.Scan(&user.Premium)
-// 	if err != nil {
-// 		slog.Error("[ERR]", "err", err)
-// 		return
-// 	}
-
-// 	if user.Premium {
-// 		fmt.Print("Enter premium expiration date (YYYY-MM-DD): ")
-// 		var premiumExpiration string
-// 		_, err = fmt.Scan(&premiumExpiration)
-// 		if err != nil {
-// 			slog.Error("[ERR]", "err", err)
-// 			return
-// 		}
-// 		user.PremiumExpiration, err = time.Parse("2006-01-02", premiumExpiration)
-// 		if err != nil {
-// 			log.Printf("Invalid premium expiration date format: %v", err)
-// 			return
-// 		}
-// 	} else {
-// 		user.PremiumExpiration = time.Time{} // Нулевая дата, если нет подписки
-// 	}
-// }
-
 // Обновление имени пользователя
-func (c *Contoller) UpdateUserName(ctx context.Context) {
-	var userID int
+func (c *Controller) UpdateUserName(ctx context.Context) {
+	var userIDStr string
 	var newName string
 
 	fmt.Print("Enter user ID: ")
-	_, err := fmt.Scan(&userID)
+	_, err := fmt.Scan(&userIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "err", err)
+		slog.Error("[ERR]", "Failed to read user ID", "err", err)
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		slog.Error("[ERR]", "Invalid UUID format", "err", err)
+		fmt.Println("Please enter a valid UUID.")
 		return
 	}
 
 	fmt.Print("Enter new user name: ")
 	_, err = fmt.Scan(&newName)
 	if err != nil {
-		slog.Error("[ERR]", "err", err)
+		slog.Error("[ERR]", "Failed to read new name", "err", err)
 		return
 	}
 
@@ -373,13 +379,20 @@ func (c *Contoller) UpdateUserName(ctx context.Context) {
 }
 
 // Удаление пользователя
-func (c *Contoller) DeleteUser(ctx context.Context) {
-	var userID int
+func (c *Controller) DeleteUser(ctx context.Context) {
+	var userIDStr string
 
 	fmt.Print("Enter user ID to delete: ")
-	_, err := fmt.Scan(&userID)
+	_, err := fmt.Scan(&userIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "err", err)
+		slog.Error("[ERR]", "Failed to read user ID", "err", err)
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		slog.Error("[ERR]", "Invalid UUID format", "err", err)
+		fmt.Println("Please enter a valid UUID.")
 		return
 	}
 
@@ -392,13 +405,20 @@ func (c *Contoller) DeleteUser(ctx context.Context) {
 }
 
 // Получение альбомов исполнителя
-func (c *Contoller) AlbumsByArtist(ctx context.Context) {
-	var artistID string
+func (c *Controller) AlbumsByArtist(ctx context.Context) {
+	var artistIDStr string
 
 	fmt.Print("Enter artist ID: ")
-	_, err := fmt.Scan(&artistID)
+	_, err := fmt.Scan(&artistIDStr)
 	if err != nil {
-		slog.Error("[ERR]", "err", err)
+		slog.Error("[ERR]", "Failed to read artist ID", "err", err)
+		return
+	}
+
+	artistID, err := uuid.Parse(artistIDStr)
+	if err != nil {
+		slog.Error("[ERR]", "Invalid UUID format", "err", err)
+		fmt.Println("Please enter a valid UUID.")
 		return
 	}
 

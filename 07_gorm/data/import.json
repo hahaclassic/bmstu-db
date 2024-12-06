@@ -1,0 +1,83 @@
+[
+    {
+      "id": "c2052afd-1cf1-4fbe-9f85-c47a0d7ee17e",
+      "name": "Nienow4715",
+      "registration_date": "2024-03-10T09:40:47Z",
+      "birth_date": "1991-07-15",
+      "premium": false,
+      "premium_expiration": "2025-02-24T15:20:21+03:00"
+    },
+    {
+      "id": "9cbe2a34-962a-4c41-86b4-af582dee7798",
+      "name": "Jast2888",
+      "registration_date": "2022-09-22T02:58:50Z",
+      "birth_date": "1997-12-06",
+      "premium": false,
+      "premium_expiration": "2025-02-01T21:26:50+03:00"
+    },
+    {
+      "id": "274a0f51-f0a3-4eb7-94b1-78ac0e402169",
+      "name": "Hoppe9511",
+      "registration_date": "2024-02-08T17:32:39Z",
+      "birth_date": "1991-05-02",
+      "premium": true,
+      "premium_expiration": "2025-01-11T12:02:03+03:00"
+    },
+    {
+      "id": "f1ca6d23-d6a5-4cb9-8152-cdc193e66d1c",
+      "name": "Renner6125",
+      "registration_date": "2020-11-29T13:06:27Z",
+      "birth_date": "1974-01-24",
+      "premium": true,
+      "premium_expiration": "2025-03-31T13:23:56+03:00"
+    },
+    {
+      "id": "31dafef6-9541-47e8-998e-18c2fa00e184",
+      "name": "Jacobi7589",
+      "registration_date": "2023-02-09T05:54:10Z",
+      "birth_date": "1992-03-18",
+      "premium": true,
+      "premium_expiration": "2025-10-05T14:18:38+03:00"
+    },
+    {
+      "id": "b08ed245-bd91-497c-848d-4c471482bce3",
+      "name": "Balistreri3068",
+      "registration_date": "2020-12-28T08:21:35Z",
+      "birth_date": "1952-10-26",
+      "premium": false,
+      "premium_expiration": "2025-07-01T00:14:12+03:00"
+    },
+    {
+      "id": "fcc42ab3-8e34-49d3-a188-0b6e5b877f11",
+      "name": "Keebler5495",
+      "registration_date": "2020-12-05T00:40:22Z",
+      "birth_date": "1970-04-22",
+      "premium": false,
+      "premium_expiration": "2025-08-25T13:52:39+03:00"
+    },
+    {
+      "id": "dac396de-f2b2-4152-ad5a-8bbf2ede85d9",
+      "name": "Gutmann1078",
+      "registration_date": "2021-01-29T03:52:23Z",
+      "birth_date": "1951-09-13",
+      "premium": false,
+      "premium_expiration": "2025-12-03T17:32:22+03:00"
+    },
+    {
+      "id": "27e98a14-f1bd-4f22-9a4a-c0e8edc17edb",
+      "name": "Schaefer4608",
+      "registration_date": "2024-09-25T19:04:27Z",
+      "birth_date": "1976-02-23",
+      "premium": true,
+      "premium_expiration": "2025-12-17T01:05:56+03:00"
+    },
+    {
+      "id": "28b6a806-6db6-452c-8309-722d4410a967",
+      "name": "Rohan9267",
+      "registration_date": "2022-12-19T02:32:41Z",
+      "birth_date": "1983-08-08",
+      "premium": true,
+      "premium_expiration": "2025-09-05T01:29:13+03:00"
+    }
+  ]
+  

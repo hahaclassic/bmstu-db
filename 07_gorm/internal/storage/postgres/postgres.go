@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/google/uuid"
 	"github.com/hahaclassic/databases/07_gorm/config"
 	"github.com/hahaclassic/databases/07_gorm/internal/models"
 	"github.com/hahaclassic/databases/07_gorm/internal/storage"
@@ -101,7 +102,7 @@ func (s *Storage) UsersOlderThan(ctx context.Context, age int) ([]*models.User, 
 
 // Однотабличный запрос
 // Получение всех треков одного жанра
-func (s *Storage) GetTracksByGenre(ctx context.Context, genre string) ([]*models.Track, error) {
+func (s *Storage) TracksByGenre(ctx context.Context, genre string) ([]*models.Track, error) {
 	var tracks []*models.Track
 	if err := s.db.WithContext(ctx).Where("genre = ?", genre).Find(&tracks).Error; err != nil {
 		return nil, err
@@ -111,12 +112,13 @@ func (s *Storage) GetTracksByGenre(ctx context.Context, genre string) ([]*models
 }
 
 // Многотабличный запрос
-func (s *Storage) GetAlbumsWithTrackCounts(ctx context.Context) ([]*models.AlbumTrackCount, error) {
+func (s *Storage) AlbumsWithTrackCounts(ctx context.Context, genre string) ([]*models.AlbumTrackCount, error) {
 	var results []*models.AlbumTrackCount
 
 	err := s.db.WithContext(ctx).Table("albums").
 		Select("albums.id as album_id, albums.title, COUNT(tracks.id) as track_count").
 		Joins("LEFT JOIN tracks ON albums.id = tracks.album_id").
+		Where("albums.genre = ?", genre).
 		Group("albums.id").
 		Scan(&results).Error
 
@@ -129,24 +131,44 @@ func (s *Storage) AddUser(ctx context.Context, user *models.User) error {
 }
 
 // Обновление username
-func (s *Storage) UpdateUserName(ctx context.Context, userID int, newName string) error {
+func (s *Storage) UpdateUserName(ctx context.Context, userID uuid.UUID, newName string) error {
 	return s.db.WithContext(ctx).Model(&models.User{}).
 		Where("id = ?", userID).Update("name", newName).Error
 }
 
 // Удаление пользователя
-func (s *Storage) DeleteUser(ctx context.Context, userID int) error {
+func (s *Storage) DeleteUser(ctx context.Context, userID uuid.UUID) error {
 	return s.db.WithContext(ctx).Delete(&models.User{}, userID).Error
 }
 
 // Получение альбомов исполнителя
-func (s *Storage) AlbumsByArtist(ctx context.Context, artistID string) ([]*models.Album, error) {
+func (s *Storage) AlbumsByArtist(ctx context.Context, artistID uuid.UUID) ([]*models.Album, error) {
 	var albums []*models.Album
 
-	if err := s.db.Raw("SELECT * FROM get_albums_by_artist(?)", artistID).
+	if err := s.db.Raw(`SELECT album_id as id, title, release_date, label, 
+						genre FROM get_albums_by_artist(?)`, artistID).
 		Scan(&albums).Error; err != nil {
 		return nil, fmt.Errorf("failed to fetch albums by artist: %w", err)
 	}
 
 	return albums, nil
+}
+
+func (s *Storage) ExportUsersToJSON(ctx context.Context) ([]byte, error) {
+	var result string
+	query := `SELECT json_agg(row_to_json(users)) FROM users`
+
+	if err := s.db.WithContext(ctx).Raw(query).Scan(&result).Error; err != nil {
+		return nil, fmt.Errorf("failed to export users to JSON: %w", err)
+	}
+
+	return []byte(result), nil
+}
+
+func (s *Storage) ImportUsers(ctx context.Context, users []*models.User) error {
+	if err := s.db.WithContext(ctx).Create(&users).Error; err != nil {
+		return fmt.Errorf("failed to insert users into the database: %w", err)
+	}
+
+	return nil
 }

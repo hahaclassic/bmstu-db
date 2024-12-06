@@ -7,10 +7,10 @@ import (
 )
 
 type User struct {
-	ID                uuid.UUID `fake:"-"`
-	Name              string    `fake:"{username}"`
-	RegistrationDate  time.Time `fake:"-"`
-	BirthDate         time.Time `fake:"-"`
-	Premium           bool      `fake:"{bool}"`
-	PremiumExpiration time.Time `fake:"-"`
+	ID                uuid.UUID `json:"id"`
+	Name              string    `json:"name"`
+	RegistrationDate  time.Time `json:"registration_date"`
+	BirthDate         time.Time `json:"birth_date"`
+	Premium           bool      `json:"premium"`
+	PremiumExpiration time.Time `json:"premium_expiration"`
 }

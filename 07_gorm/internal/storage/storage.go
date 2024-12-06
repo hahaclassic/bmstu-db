@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/hahaclassic/databases/07_gorm/internal/models"
 )
 
@@ -27,12 +28,15 @@ type Storage interface {
 	ArtistsWithReleasedAlbumYear(ctx context.Context, year int) ([]*models.Artist, error)
 	UsersOlderThan(ctx context.Context, age int) ([]*models.User, error)
 
-	GetTracksByGenre(ctx context.Context, genre string) ([]*models.Track, error)
-	GetAlbumsWithTrackCounts(ctx context.Context) ([]*models.AlbumTrackCount, error)
+	TracksByGenre(ctx context.Context, genre string) ([]*models.Track, error)
+	AlbumsWithTrackCounts(ctx context.Context, genre string) ([]*models.AlbumTrackCount, error)
 
 	AddUser(ctx context.Context, user *models.User) error
-	UpdateUserName(ctx context.Context, userID int, newName string) error
-	DeleteUser(ctx context.Context, userID int) error
+	UpdateUserName(ctx context.Context, userID uuid.UUID, newName string) error
+	DeleteUser(ctx context.Context, userID uuid.UUID) error
 
-	AlbumsByArtist(ctx context.Context, artistID string) ([]*models.Album, error)
+	AlbumsByArtist(ctx context.Context, artistID uuid.UUID) ([]*models.Album, error)
+
+	ExportUsersToJSON(ctx context.Context) ([]byte, error)
+	ImportUsers(ctx context.Context, users []*models.User) error
 }
