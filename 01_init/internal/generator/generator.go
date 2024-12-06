@@ -25,13 +25,13 @@ func Run(conf *config.Config) {
 		musicStorage, err = csv.New(conf.Generator.OutputCSV)
 	}
 
-	defer musicStorage.Close()
-
 	if err != nil {
 		slog.Error("", "[ERR]", err)
 
 		return
 	}
+
+	defer musicStorage.Close()
 
 	musicService := service.New(musicStorage)
 

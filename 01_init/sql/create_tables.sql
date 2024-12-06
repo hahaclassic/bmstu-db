@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS playlists (
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY,
     name VARCHAR(100),
-    registration_date TIMESTAMP,
+    registration_date TIMESTAMP WITH TIME ZONE,
     birth_date DATE,
     premium BOOLEAN,
-    premium_expiration TIMESTAMP
+    premium_expiration TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS playlist_tracks (
