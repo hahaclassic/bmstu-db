@@ -1,0 +1,55 @@
+services:
+  music-service-db:
+    image: postgres:16.0
+    container_name: music-service-db
+    env_file:
+      - $PWD/.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./data/:/data/
+    ports:
+      - "5432:5432"
+    networks:
+      - common-network
+
+  redis:
+      image: redis:latest
+      container_name: redis_container
+      ports:
+        - "6379:6379"  
+      volumes:
+        - redis-data:/data 
+      restart: always 
+      networks:
+        - common-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_container
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: password
+      GF_SERVER_ROOT_URL: http://localhost:3000/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    volumes:
+      - grafana-data:/var/lib/grafana  
+    depends_on:
+      - music-service-db
+    networks:
+      - common-network
+
+networks:
+  common-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    name: music-service-db-volume  
+  grafana-data:
+    name: grafana-db-volume
+  redis-data:
+    name: redis-db-volume
+
