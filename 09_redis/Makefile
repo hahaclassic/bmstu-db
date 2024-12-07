@@ -1,6 +1,3 @@
-proto:
-	protoc --go_out=. ./proto/track.proto
-
 # sudo apt-get install gnuplot
 graph:
 	gnuplot ./scripts/basic.gpi
