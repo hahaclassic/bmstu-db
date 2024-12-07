@@ -1,0 +1,10 @@
+reset
+set terminal pdf
+set title "basic (no changes)"
+set output "data/base.pdf"
+set size ratio 0.5625
+set xlabel "Time"
+set ylabel "Duration"
+set grid
+plot "data/basic_db.txt" with l title 'Postgres' lw 2 lc rgb "blue", \
+     "data/basic_cache.txt" with l title 'Redis' lw 2 lc rgb "red"

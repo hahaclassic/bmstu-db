@@ -1,0 +1,10 @@
+reset
+set terminal pdf
+set title "With updates (1req/10s)"
+set output "data/update.pdf"
+set size ratio 0.5625
+set xlabel "Time"
+set ylabel "Duration"
+set grid
+plot "data/update_db.txt" with l title 'Postgres' lw 2 lc rgb "blue", \
+     "data/update_cache.txt" with l title 'Redis' lw 2 lc rgb "red"
